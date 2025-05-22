@@ -1,0 +1,1498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PMD742OMNI HUB</title>
+  <style>
+    /*
+     * CSS Custom Properties (Variables)
+     * Material 3 Expressive Tonal Palette (derived from Cyan) for a dark, futuristic theme.
+     */
+    :root {
+      /* Primary Colors (Cyan Accent) */
+      --sys-color-primary: #00ffff; /* Main accent color */
+      --sys-color-on-primary: #000000; /* Text on primary */
+      --sys-color-primary-container: rgba(0, 255, 255, 0.25); /* More prominent primary shade */
+      --sys-color-on-primary-container: #ffffff; /* Text on primary container */
+
+      /* Neutral/Surface Colors (Dark Theme) */
+      --sys-color-background: #0a0a2e; /* Deep dark blue background */
+      --sys-color-on-background: #e0e0e0; /* Main text on background */
+      --sys-color-surface: #1e1e1e; /* Card/section background */
+      --sys-color-on-surface: #f0f0f0; /* Text on surface */
+      --sys-color-surface-variant: rgba(30, 30, 30, 0.9); /* Slightly different surface shade with opacity */
+      --sys-color-on-surface-variant: #cccccc; /* Secondary text on surface variant */
+
+      /* Outline/Border Colors */
+      --sys-color-outline: rgba(255, 255, 255, 0.15); /* General borders */
+      --sys-color-outline-variant: rgba(0, 255, 255, 0.4); /* Accent borders */
+
+      /* Shadows (Cyber Glow) */
+      --sys-shadow-accent-light: rgba(0, 255, 255, 0.4);
+      --sys-shadow-accent-medium: rgba(0, 255, 255, 0.6);
+      --sys-shadow-dark: rgba(0, 0, 0, 0.7);
+
+      /* General App Styling */
+      --app-border-radius: 20px 50px 20px 50px;
+      --card-border-radius: 15px;
+    }
+
+    /* Global Resets and Base Styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(
+        45deg,
+        var(--sys-color-background),
+        #0a0a2e, /* Keep a dark blue hint */
+        #121212
+      );
+      color: var(--sys-color-on-background);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden; /* Prevent body scroll */
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* 3D Canvas Background */
+    #canvas3d {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1; /* Behind all content */
+      opacity: 0.3; /* Subtle background */
+    }
+
+    /* Main Application Container */
+    .app-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      max-width: 450px; /* Adjusted for a typical mobile portrait ratio (approx 9/16 for height on wider screens) */
+      max-height: 800px; /* Adjusted to keep reasonable size */
+      aspect-ratio: 9 / 16; /* Maintain aspect ratio */
+      overflow: hidden; /* Hide anything outside its bounds */
+      background-color: var(--sys-color-background);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      padding: 20px;
+      padding-bottom: 100px; /* Adjusted space for the fixed bottom nav */
+      border-radius: var(--app-border-radius); /* Unique border radius */
+      box-shadow: 0 0 25px var(--sys-shadow-accent-medium); /* Stronger accent glow */
+      z-index: 10; /* Above 3D canvas */
+    }
+
+    /* Title Pill Styling */
+    .title-pill {
+      background-color: var(--sys-color-surface);
+      border: 1px solid var(--sys-color-outline-variant);
+      border-radius: 30px;
+      padding: 10px 25px;
+      margin-bottom: 2rem;
+      display: inline-block;
+      text-align: center;
+      box-shadow: 0 4px 15px var(--sys-shadow-dark);
+      flex-shrink: 0; /* Prevent shrinking */
+      position: relative;
+      z-index: 12; /* Above other elements */
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 200;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--sys-color-primary);
+      margin: 0;
+    }
+
+    /* Content Section Styling */
+    .content-section {
+      flex-grow: 1; /* Allows it to take available vertical space */
+      margin-top: 1.5rem;
+      padding: 20px;
+      border: 1px solid var(--sys-color-outline);
+      border-radius: var(--app-border-radius);
+      background-color: var(--sys-color-surface-variant);
+      backdrop-filter: blur(15px); /* Frosted glass effect */
+      -webkit-backdrop-filter: blur(15px);
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      position: relative;
+      overflow-y: auto; /* Enable vertical scrolling */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      text-align: center;
+      width: 100%; /* Full width within container */
+      box-shadow: 0 0 25px 5px var(--sys-shadow-accent-medium);
+      z-index: 11; /* Above floating elements */
+
+      /* Hide scrollbar for clean look */
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+    }
+
+    /* Hide Webkit scrollbar */
+    .content-section::-webkit-scrollbar {
+      display: none;
+    }
+
+    .content-section h2 {
+      color: var(--sys-color-primary);
+      margin-bottom: 1rem;
+      font-size: 1.8rem;
+      font-weight: 300;
+    }
+
+    .content-section p {
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--sys-color-on-surface);
+      margin-bottom: 0.8rem;
+    }
+
+    .content-section ul {
+      list-style: none;
+      padding: 0;
+      margin-bottom: 1rem;
+      color: var(--sys-color-on-surface);
+    }
+
+    .content-section ul li {
+      margin-bottom: 0.5rem;
+      padding-left: 1.5rem;
+      position: relative;
+    }
+
+    .content-section ul li::before {
+      content: '›'; /* A simple arrow or bullet */
+      color: var(--sys-color-primary);
+      position: absolute;
+      left: 0;
+      font-weight: bold;
+    }
+
+    /* Floating Background Elements */
+    .floating-element {
+      position: absolute;
+      background: rgba(0, 255, 255, 0.08);
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      border-radius: 50%;
+      pointer-events: none; /* Allows clicks to pass through */
+      z-index: 1; /* Behind content, above 3D canvas */
+    }
+
+    /* Main Action Button */
+    .main-action-btn {
+      background: var(--sys-color-surface);
+      color: var(--sys-color-primary);
+      border: 1px solid var(--sys-color-outline-variant);
+      padding: 15px 30px;
+      text-decoration: none;
+      text-align: center;
+      border-radius: 25px; /* Slightly more rounded */
+      transition: all 0.3s ease;
+      font-weight: 600;
+      font-size: 1.15rem;
+      display: inline-block;
+      margin-top: 1.5rem; /* Ensure consistent margin */
+      width: 90%; /* Use percentage width */
+      max-width: 300px; /* Max width to prevent over-stretching */
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 15px var(--sys-shadow-dark); /* Stronger shadow */
+      z-index: 12;
+      cursor: pointer; /* Add cursor pointer for consistency */
+    }
+
+    .main-action-btn:hover {
+      background: var(--sys-color-primary-container);
+      border-color: var(--sys-color-primary);
+      box-shadow: 0 0 20px var(--sys-shadow-accent-light); /* More intense hover glow */
+      transform: translateY(-3px); /* More pronounced lift */
+    }
+
+    /* Glowing Border Animation for Button */
+    .main-action-btn::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: conic-gradient(
+        var(--sys-color-primary) 0deg,
+        transparent 90deg,
+        transparent 180deg,
+        var(--sys-color-primary) 270deg,
+        transparent 360deg
+      );
+      animation: borderRotate 3s linear infinite;
+      z-index: -1;
+      opacity: 0.2;
+    }
+
+    @keyframes borderRotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Utility Class for Hiding Elements */
+    .hidden {
+      display: none !important;
+    }
+
+    /* Bottom Navigation Bar */
+    .bottom-nav-bar {
+      position: fixed; /* Changed to fixed positioning */
+      bottom: 20px; /* Adjusted bottom value */
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: var(--sys-color-surface-variant);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      padding: 10px;
+      border-radius: 35px;
+      box-shadow: 0 8px 25px var(--sys-shadow-dark);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 1000; /* Always on top */
+      border: 1px solid var(--sys-color-outline);
+      width: calc(100% - 40px); /* Leave some margin on sides */
+      justify-content: center;
+    }
+
+    .nav-options-wrapper {
+      display: flex;
+      gap: 5px;
+      flex-grow: 1;
+      justify-content: center;
+      overflow-x: auto; /* Enable horizontal scrolling for many options */
+      white-space: nowrap; /* Prevent wrapping */
+      -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+
+      /* Hide scrollbar for clean look */
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Hide Webkit scrollbar for nav options */
+    .nav-options-wrapper::-webkit-scrollbar {
+        display: none;
+    }
+
+    .nav-control-btn, .nav-toggle-btn {
+      background-color: transparent;
+      color: var(--sys-color-primary);
+      padding: 10px 20px;
+      border: none; /* No default border */
+      border-radius: 0; /* Reset radius */
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      outline: none; /* Remove focus outline */
+      min-width: 80px;
+      text-align: center;
+      flex-shrink: 0; /* Prevent shrinking */
+    }
+
+    .nav-toggle-btn {
+        min-width: 40px;
+        padding: 10px 12px;
+        font-weight: bold;
+        border: 1px solid var(--sys-color-outline-variant);
+        border-radius: 50%; /* Circular buttons */
+    }
+
+    .nav-control-btn:hover, .nav-toggle-btn:hover:not(:disabled) {
+      background-color: rgba(0, 255, 255, 0.1);
+      border-color: transparent;
+      transform: scale(1.05); /* Slight hover scale effect */
+    }
+
+    .nav-toggle-btn:hover:not(:disabled) {
+        border-color: var(--sys-color-primary);
+    }
+
+    .nav-toggle-btn:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+        border-color: rgba(0, 255, 255, 0.1);
+        background-color: transparent;
+        transform: none;
+    }
+
+    /* Active Navigation Button State */
+    .nav-control-btn.active {
+      background-color: var(--sys-color-primary-container);
+      color: var(--sys-color-on-primary-container);
+      border: none;
+      font-weight: 600;
+      box-shadow: 0 2px 10px var(--sys-shadow-accent-medium);
+      transform: translateY(-2px);
+      border-bottom: 2px solid var(--sys-color-primary); /* Underline effect */
+      padding-bottom: 8px; /* Adjust padding for underline */
+    }
+
+    /* Client Accounts Specific Styles (Integrated from client_balance.html) */
+    .client-view-container {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        flex-grow: 1;
+        overflow: hidden; /* Prevent container from scrolling, internal elements will scroll */
+        width: 100%; /* Ensure it takes full width of its parent .content-section */
+        height: 100%; /* Ensure it takes full height of its parent .content-section */
+    }
+
+    .client-view {
+        display: none;
+        padding: 0;
+        min-height: 0;
+        flex-direction: column; /* Default to column for detail view */
+        gap: 15px; /* Added gap for consistent spacing */
+        flex-grow: 1; /* Only the active view grows */
+        overflow: hidden; /* Prevent active view from scrolling if content overflows, let inner element handle it */
+    }
+    .client-view.active {
+        display: flex;
+    }
+
+    /* Client List View */
+    #clientListView .search-container {
+        margin-bottom: 5px;
+        position: relative;
+        flex-shrink: 0;
+    }
+
+    #clientListView .search-container input[type="text"] {
+        width: 100%;
+        padding: 12px 15px 12px 40px;
+        border: 1px solid var(--sys-color-outline-variant);
+        border-radius: var(--card-border-radius);
+        font-size: 1rem;
+        background-color: var(--sys-color-surface);
+        color: var(--sys-color-on-surface);
+        box-shadow: inset 0 0 5px rgba(0, 255, 255, 0.1);
+        transition: all 0.3s ease;
+    }
+    #clientListView .search-container input[type="text"]::placeholder {
+        color: var(--sys-color-on-surface-variant);
+        opacity: 0.7;
+    }
+    #clientListView .search-container input[type="text"]:focus {
+        outline: none;
+        border-color: var(--sys-color-primary);
+        box-shadow: 0 0 10px var(--sys-shadow-accent-light), inset 0 0 5px rgba(0, 255, 255, 0.2);
+    }
+    #clientListView .search-container .search-icon {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--sys-color-outline-variant);
+        font-size: 1.2rem;
+    }
+
+    .client-name-list {
+        list-style: none;
+        padding: 0;
+        flex-grow: 1; /* Allows the list to take up available space in the flex container */
+        overflow-y: auto; /* This is where the scrollbar for the list will appear */
+        -ms-overflow-style: none; /* IE and Edge */
+        scrollbar-width: none; /* Firefox */
+        padding-right: 5px; /* for scrollbar space if needed */
+    }
+    .client-name-list::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, Opera */
+    }
+
+    .client-name-item {
+        background-color: var(--sys-color-surface);
+        border: 1px solid var(--sys-color-outline);
+        border-radius: var(--card-border-radius);
+        padding: 15px 20px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 1.1rem;
+        color: var(--sys-color-on-surface);
+        box-shadow: 0 2px 8px var(--sys-shadow-dark);
+    }
+
+    .client-name-item:hover {
+        background-color: rgba(30, 30, 30, 0.9);
+        border-color: var(--sys-color-primary);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px var(--sys-shadow-accent-light);
+    }
+
+    /* Client Detail View */
+    #clientDetailView {
+        background-color: var(--sys-color-surface);
+        border: 1px solid var(--sys-color-outline-variant);
+        border-radius: var(--card-border-radius);
+        padding: 25px;
+        box-shadow: 0 0 20px var(--sys-shadow-accent-medium);
+        text-align: center;
+        flex-direction: column;
+        justify-content: flex-start; /* Align items to the top for details */
+        align-items: center;
+        min-height: 150px;
+        overflow-y: auto; /* Allow detail view to scroll if content is too long */
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+        gap: 15px; /* Increased gap for better spacing */
+    }
+    #clientDetailView::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Restored h2 style for client name in detail view */
+    #clientDetailView h2 {
+        color: var(--sys-color-primary);
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        word-wrap: break-word;
+        text-shadow: 0 0 10px var(--sys-shadow-accent-light);
+        font-weight: 400;
+    }
+
+    /* Styles for individual balance entries */
+    .balance-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        width: 100%;
+        padding: 0.5rem 0;
+        border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+        font-size: 1.1rem;
+        color: var(--sys-color-on-surface);
+    }
+    .balance-item:last-of-type {
+        border-bottom: none; /* No border for the last item */
+        margin-bottom: 1rem; /* Space below the last balance item */
+    }
+
+    .balance-label {
+        font-weight: normal;
+        color: var(--sys-color-on-surface-variant);
+        margin-right: 1rem; /* Space between label and amount */
+        text-align: left;
+        flex-grow: 1; /* Allow label to take available space */
+    }
+
+    .balance-amount {
+        font-weight: 600;
+        font-size: 1.25rem; /* Slightly larger for emphasis */
+        text-align: right;
+        flex-shrink: 0; /* Prevent amount from shrinking */
+    }
+
+    .debt-positive {
+        color: #ff6347; /* Tomato red for positive debt (you owe) */
+        text-shadow: 0 0 5px rgba(255, 99, 71, 0.5);
+    }
+
+    .debt-negative {
+        color: #32cd32; /* Lime green for negative debt (they owe you) */
+        text-shadow: 0 0 5px rgba(50, 205, 50, 0.5);
+    }
+
+    .last-updated-info {
+        margin-top: 0.5rem;
+        color: var(--sys-color-on-surface-variant);
+        font-size: 0.95rem;
+    }
+
+    .back-button {
+        background: transparent; /* Changed to transparent */
+        color: var(--sys-color-primary);
+        border: 1px solid var(--sys-color-outline); /* Softer border */
+        padding: 12px 25px; /* Slightly less padding */
+        text-decoration: none;
+        text-align: center;
+        border-radius: 20px; /* Slightly less rounded */
+        transition: all 0.3s ease;
+        font-weight: 500; /* Slightly lighter font weight */
+        font-size: 1rem; /* Slightly smaller font size */
+        display: inline-block;
+        margin-top: auto; /* Push the button to the bottom */
+        width: 70%; /* Use percentage width */
+        max-width: 200px; /* Max width to prevent over-stretching */
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 2px 5px var(--sys-shadow-dark); /* Less prominent shadow */
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+
+    .back-button:hover {
+        background: rgba(0, 255, 255, 0.1); /* Subtle background on hover */
+        border-color: var(--sys-color-primary);
+        box-shadow: 0 0 10px var(--sys-shadow-accent-light); /* Softer hover glow */
+        transform: translateY(-1px); /* Less pronounced lift */
+    }
+
+    /* Removed ::before for back-button to differentiate it from main-action-btn */
+    .back-button::before {
+        content: none;
+    }
+
+    .no-clients-message {
+        text-align: center;
+        color: var(--sys-color-on-surface-variant);
+        padding: 20px;
+        background-color: var(--sys-color-surface);
+        border: 1px solid var(--sys-color-outline);
+        border-radius: var(--card-border-radius);
+        box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+        margin-top: 20px;
+        flex-grow: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .loader {
+        display: none;
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        width: 50px;
+        height: 50px;
+        border: 5px solid var(--sys-color-surface);
+        border-top: 5px solid var(--sys-color-primary);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        transform: translate(-50%, -50%);
+        z-index: 1000;
+    }
+
+    @keyframes spin {
+        0% { transform: translate(-50%, -50%) rotate(0deg); }
+        100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    /* New styles for LLM integration */
+    .advice-output, .faq-output, .project-idea-output, .event-description-output {
+        background-color: rgba(0, 255, 255, 0.05);
+        border: 1px solid rgba(0, 255, 255, 0.2);
+        border-radius: 10px;
+        padding: 15px;
+        margin-top: 1rem;
+        color: var(--sys-color-on-surface);
+        font-size: 0.95rem;
+        line-height: 1.5;
+        text-align: left;
+        width: 100%;
+        box-shadow: inset 0 0 5px rgba(0, 255, 255, 0.1);
+    }
+
+    .faq-input, .project-input, .event-input {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid var(--sys-color-outline-variant);
+        border-radius: var(--card-border-radius);
+        font-size: 1rem;
+        background-color: var(--sys-color-surface);
+        color: var(--sys-color-on-surface);
+        box-shadow: inset 0 0 5px rgba(0, 255, 255, 0.1);
+        transition: all 0.3s ease;
+        margin-bottom: 1rem;
+    }
+    .faq-input::placeholder, .project-input::placeholder, .event-input::placeholder {
+        color: var(--sys-color-on-surface-variant);
+        opacity: 0.7;
+    }
+    .faq-input:focus, .project-input:focus, .event-input:focus {
+        outline: none;
+        border-color: var(--sys-color-primary);
+        box-shadow: 0 0 10px var(--sys-shadow-accent-light), inset 0 0 5px rgba(0, 255, 255, 0.2);
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+        .app-container {
+            padding: 15px;
+            padding-bottom: 90px; /* Adjusted for smaller nav bar */
+            border-radius: 25px 10px 25px 10px;
+        }
+
+        .title-pill {
+            margin-bottom: 1.5rem;
+            padding: 8px 20px;
+        }
+
+        h1 {
+            font-size: 1.6rem;
+        }
+
+        .content-section {
+            padding: 15px;
+            margin-top: 1rem;
+            border-radius: 15px 40px 15px 40px;
+        }
+
+        .content-section h2 {
+            font-size: 1.6rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .content-section p, .content-section ul li {
+            font-size: 0.95rem;
+        }
+
+        .main-action-btn {
+            padding: 12px 25px;
+            font-size: 1rem;
+            width: 90%; /* Responsive width */
+            max-width: 280px; /* Adjusted max-width for smaller screens */
+        }
+
+        .bottom-nav-bar {
+            bottom: 20px;
+            padding: 8px;
+            border-radius: 30px;
+            width: calc(100% - 30px);
+        }
+
+        .nav-control-btn, .nav-toggle-btn {
+            padding: 8px 15px;
+            font-size: 0.85rem;
+            min-width: 70px;
+        }
+
+        .nav-toggle-btn {
+            min-width: 35px;
+            padding: 8px 10px;
+        }
+
+        /* Client Accounts specific responsive adjustments */
+        #clientListView .search-container input[type="text"] {
+            font-size: 0.95rem;
+            padding: 10px 15px 10px 35px;
+        }
+
+        #clientListView .search-container .search-icon {
+            left: 10px;
+            font-size: 1.1rem;
+        }
+
+        .client-name-item {
+            font-size: 1rem;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+        }
+
+        #clientDetailView {
+            padding: 20px;
+        }
+
+        #clientDetailView h2 {
+            font-size: 1.8rem;
+            margin-bottom: 0.6rem;
+        }
+
+        .balance-item {
+            font-size: 1rem;
+            padding: 0.3rem 0;
+        }
+        .balance-amount {
+            font-size: 1.1rem;
+        }
+        .last-updated-info {
+            font-size: 0.8rem;
+        }
+
+        .back-button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            width: 70%; /* Responsive width */
+            max-width: 180px; /* Adjusted max-width for smaller screens */
+        }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas3d"></canvas>
+  <div class="loader" id="loader" role="status" aria-label="Loading content"></div>
+
+  <div class="app-container">
+    <div class="title-pill">
+      <h1 id="mainAppTitle">PMD742OMNI HUB</h1>
+    </div>
+
+    <div id="about-content" class="content-section">
+      <h2>About PMD742OMNI HUB</h2>
+      <p>Welcome to your personalized OMNI HUB. This hub is designed to centralize your important links and information efficiently.</p>
+      <p>Use the navigation below to switch between different sections and explore various aspects of your digital presence.</p>
+      <p>Our goal is to provide a seamless and intuitive experience, bringing all your essential resources into one accessible location. Whether it's managing finances, connecting socially, or exploring creative works, the OMNI HUB has you covered.</p>
+      <p>We continuously strive to improve and expand the functionality of this hub. Your feedback is invaluable in shaping its future development. Thank you for being a part of the PMD742 community.</p>
+      <p>This is some more content to make the section scrollable. You can add as much text or elements as you need here.</p>
+      <p>Scroll down to see more!</p>
+      <p>More detailed information about the hub's mission and vision will be added here soon. Stay tuned for exciting updates!</p>
+    </div>
+
+    <div id="financial-content" class="content-section hidden">
+        <div class="client-view-container">
+            <section id="clientListView" class="client-view active">
+                <div class="search-container">
+                    <span class="search-icon" aria-hidden="true">&#128269;</span>
+                    <input type="text" id="searchInput" placeholder="Search by account name..." aria-label="Search client accounts">
+                </div>
+                <ul class="client-name-list" id="clientNameListElement">
+                </ul>
+                <div class="no-clients-message" id="noClientsInListMessage" role="status" aria-live="polite" style="display: none;">
+                    No accounts found.
+                </div>
+            </section>
+
+            <section id="clientDetailView" class="client-view">
+                <h2 id="detailClientName"></h2>
+                <div id="clientBalancesContainer" style="width: 100%; text-align: center; margin-top: 0.5rem; padding: 0 10%;">
+                </div>
+                <p class="last-updated-info"><strong>Last Updated:</strong> <span id="detailClientLastUpdated"></span></p>
+                <button class="back-button" id="backButton">Back to List</button>
+            </section>
+        </div>
+    </div>
+
+    <div id="social-content" class="content-section hidden">
+      <h2>Social Connect</h2>
+      <p>Reach out through your preferred social channels and stay connected with the PMD742 community and support team.</p>
+      <p>We believe in strong community ties and open communication.</p>
+      <p>Connect with us on other platforms coming soon!</p>
+      <a href="https://wa.me/+263786892224" class="main-action-btn" target="_blank" rel="noopener noreferrer">Contact via WhatsApp</a>
+    </div>
+
+    <div id="creative-works-content" class="content-section hidden">
+      <h2>Creative Works</h2>
+      <p>Explore a portfolio of innovative creative projects, designs, and digital art. Witness the blend of technology and imagination.</p>
+      <p>Here are some examples of our work:</p>
+      <ul>
+        <li>Project Alpha: A deep dive into AI-driven design.</li>
+        <li>Design Beta: Revolutionizing user interfaces with haptic feedback.</li>
+        <li>Concept Gamma: Exploring the future of augmented reality in urban planning.</li>
+        <li>Interactive Experience Delta: A new frontier in immersive storytelling.</li>
+      </ul>
+    </div>
+
+    <div id="events-content" class="content-section hidden">
+      <h2>Upcoming Events</h2>
+      <p>Stay updated with the latest events, webinars, workshops, and conferences. Don't miss out on important announcements!</p>
+      <ul>
+        <li>Webinar: Future Tech Innovations (June 10th, 2025)</li>
+        <li>Workshop: AI for Beginners (July 5th, 2025)</li>
+        <li>Conference: Digital Horizons Summit (Aug 20th-22nd, 2025)</li>
+        <li>Community Meetup: Q3 Brainstorm (Sept 15th, 2025)</li>
+      </ul>
+    </div>
+
+    <div id="support-content" class="content-section hidden">
+      <h2>Support Center</h2>
+      <p>Find answers to frequently asked questions, troubleshoot common issues, or get in touch with our dedicated support team for personalized assistance.</p>
+      <p>Our comprehensive FAQ section covers a wide range of topics to help you quickly resolve your queries.</p>
+    </div>
+
+    <nav class="bottom-nav-bar">
+      <button id="nav-prev" class="nav-toggle-btn" aria-label="Previous Section">&lt;</button>
+      <div class="nav-options-wrapper">
+        </div>
+      <button id="nav-next" class="nav-toggle-btn" aria-label="Next Section">&gt;</button>
+    </nav>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // --- Three.js Setup and Animation ---
+      const setupThreeJS = () => {
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({
+          canvas: document.querySelector('#canvas3d'),
+          antialias: true,
+          alpha: true
+        });
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+
+        // Main Knot
+        const knotGeometry = new THREE.TorusKnotGeometry(10, 3, 256, 32);
+        const knotMaterial = new THREE.MeshStandardMaterial({
+          color: 0x00ffff,
+          roughness: 0.4,
+          metalness: 0.7,
+          transparent: true,
+          opacity: 0.15
+        });
+        const knot = new THREE.Mesh(knotGeometry, knotMaterial);
+        scene.add(knot);
+
+        // Dodecahedron (faceted sphere-like)
+        const dodecaGeometry = new THREE.DodecahedronGeometry(7);
+        const dodecaMaterial = new THREE.MeshStandardMaterial({
+          color: 0x00aaff,
+          wireframe: true,
+          transparent: true,
+          opacity: 0.35,
+          emissive: 0x00aaff,
+          emissiveIntensity: 0.2
+        });
+        const dodeca = new THREE.Mesh(dodecaGeometry, dodecaMaterial);
+        dodeca.position.set(-20, 15, -40);
+        scene.add(dodeca);
+
+        // Icosahedron (another complex polyhedron)
+        const icosaGeometry = new THREE.IcosahedronGeometry(10);
+        const icosaMaterial = new THREE.MeshBasicMaterial({
+          color: 0xaa00ff,
+          wireframe: true,
+          transparent: true,
+          opacity: 0.25
+        });
+        const icosa = new THREE.Mesh(icosaGeometry, icosaMaterial);
+        icosa.position.set(25, -12, -30);
+        scene.add(icosa);
+
+        // Cylinder (with a grid-like texture or material)
+        const cylinderGeometry = new THREE.CylinderGeometry(6, 6, 20, 32);
+        const cylinderMaterial = new THREE.MeshStandardMaterial({
+          color: 0x00ffff,
+          roughness: 0.3,
+          metalness: 0.8,
+          transparent: true,
+          opacity: 0.2
+        });
+        const cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
+        cylinder.position.set(0, 30, -50);
+        cylinder.rotation.x = Math.PI / 2;
+        scene.add(cylinder);
+
+        // Enhanced Particle System
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 5000;
+        const posArray = new Float32Array(particlesCount * 3);
+        const sizes = new Float32Array(particlesCount);
+
+        for (let i = 0; i < particlesCount; i++) {
+          const x = (Math.random() - 0.5) * 200;
+          const y = (Math.random() - 0.5) * 200;
+          const z = (Math.random() - 0.5) * 200;
+          posArray[i * 3] = x;
+          posArray[i * 3 + 1] = y;
+          posArray[i * 3 + 2] = z;
+          sizes[i] = Math.random() * 1.5 + 0.5;
+        }
+
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        particlesGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+        const customParticlesMaterial = new THREE.ShaderMaterial({
+          uniforms: {
+            color: { value: new THREE.Color(0x00ffff) },
+            pointTexture: { value: new THREE.TextureLoader().load('https://threejs.org/examples/textures/sprites/disc.png') },
+            time: { value: 0.0 }
+          },
+          vertexShader: `
+            attribute float size;
+            uniform float time;
+            uniform vec3 color;
+            varying vec3 vColor;
+
+            void main() {
+              vColor = color;
+              vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+
+              // Twinkle effect: vary size based on sine wave
+              float twinkle = sin(time * 5.0 + position.x * 0.1) * 0.5 + 0.5;
+              gl_PointSize = size * (600.0 / -mvPosition.z) * twinkle;
+
+              gl_Position = projectionMatrix * mvPosition;
+            }
+          `,
+          fragmentShader: `
+            uniform vec3 color;
+            uniform sampler2D pointTexture;
+            varying vec3 vColor;
+
+            void main() {
+              gl_FragColor = vec4(vColor, 1.0);
+              gl_FragColor = gl_FragColor * texture2D(pointTexture, gl_PointCoord);
+            }
+          `,
+          blending: THREE.AdditiveBlending,
+          depthTest: false,
+          transparent: true
+        });
+
+        const particlesMesh = new THREE.Points(particlesGeometry, customParticlesMaterial);
+        scene.add(particlesMesh);
+
+        // Lights
+        const ambientLight = new THREE.AmbientLight(0x404040, 2);
+        scene.add(ambientLight);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        directionalLight.position.set(5, 5, 5).normalize();
+        scene.add(directionalLight);
+
+        camera.position.z = 40;
+
+        const clock = new THREE.Clock();
+
+        const animate = () => {
+          requestAnimationFrame(animate);
+
+          const elapsedTime = clock.getElapsedTime();
+
+          // Animate shapes
+          knot.rotation.x += 0.002;
+          knot.rotation.y += 0.003;
+
+          dodeca.rotation.x += 0.005;
+          dodeca.rotation.y += 0.005;
+          dodeca.position.y = Math.sin(elapsedTime * 0.5) * 8 + 15;
+          dodeca.position.x = Math.cos(elapsedTime * 0.4) * 10 - 20;
+
+          icosa.rotation.z += 0.004;
+          icosa.rotation.x += 0.002;
+          icosa.position.x = Math.cos(elapsedTime * 0.3) * 15 + 25;
+          icosa.position.y = Math.sin(elapsedTime * 0.2) * 10 - 12;
+
+          cylinder.rotation.y += 0.007;
+          cylinder.position.z = Math.sin(elapsedTime * 0.6) * 10 - 50;
+          cylinder.position.x = Math.cos(elapsedTime * 0.7) * 5;
+
+          // Update particle shader time uniform
+          customParticlesMaterial.uniforms.time.value = elapsedTime;
+          particlesMesh.rotation.y += 0.0005;
+          particlesMesh.rotation.x += 0.0002;
+
+          renderer.render(scene, camera);
+        };
+
+        animate();
+
+        // Handle window resize for Three.js
+        window.addEventListener('resize', () => {
+          camera.aspect = window.innerWidth / window.innerHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+      };
+
+      // --- Floating Elements Animation ---
+      const createFloatingElements = () => {
+        const elementsCount = 8;
+        const appContainer = document.querySelector('.app-container');
+
+        for (let i = 0; i < elementsCount; i++) {
+          const element = document.createElement('div');
+          element.className = 'floating-element';
+
+          // Initial random position within a reasonable range of the app container
+          const size = Math.random() * 100 + 50; // Size between 50px and 150px
+          // Ensure elements start slightly outside or on the edge to float in
+          const x = Math.random() * appContainer.offsetWidth * 1.2 - (appContainer.offsetWidth * 0.1);
+          const y = Math.random() * appContainer.offsetHeight * 1.2 - (appContainer.offsetHeight * 0.1);
+
+          element.style.width = `${size}px`;
+          element.style.height = `${size}px`;
+          element.style.left = `${x}px`;
+          element.style.top = `${y}px`;
+
+          // Store initial position for mouse parallax effect
+          element.dataset.initialX = x;
+          element.dataset.initialY = y;
+
+          appContainer.appendChild(element);
+
+          // Anime.js animation for floating motion
+          anime({
+            targets: element,
+            translateX: () => anime.random(-150, 150), // Less drastic movement
+            translateY: () => anime.random(-150, 150),
+            scale: () => anime.random(0.8, 1.5), // More subtle scale variation
+            rotate: () => anime.random(0, 360), // Random initial rotation
+            duration: () => anime.random(6000, 18000), // Slower, smoother movement
+            easing: 'easeInOutSine', // Smooth sine wave easing
+            loop: true,
+            direction: 'alternate',
+          });
+        }
+
+        // Mouse parallax effect on floating elements
+        document.addEventListener('mousemove', (e) => {
+          const appRect = appContainer.getBoundingClientRect();
+          const centerX = appRect.left + (appRect.width / 2);
+          const centerY = appRect.top + (appRect.height / 2);
+
+          const mouseX = e.clientX - centerX;
+          const mouseY = e.clientY - centerY;
+
+          anime({
+            targets: '.floating-element',
+            translateX: (el, i) => {
+              const initialX = parseFloat(el.dataset.initialX);
+              return (initialX - (appRect.width / 2)) + (mouseX * 0.05 * ((i % 2 === 0) ? 1 : -1)); // Vary parallax direction
+            },
+            translateY: (el, i) => {
+              const initialY = parseFloat(el.dataset.initialY);
+              return (initialY - (appRect.height / 2)) + (mouseY * 0.05 * ((i % 3 === 0) ? 1 : -1)); // Vary parallax direction
+            },
+            duration: 1000,
+            easing: 'easeOutCubic',
+          });
+        });
+      };
+
+      // --- Navigation Logic ---
+      const navOptions = [
+        { label: "About", target: "about-content" },
+        { label: "Financial", target: "financial-content" },
+        { label: "Social", target: "social-content" },
+        { label: "Creative", target: "creative-works-content" },
+      ];
+
+      let currentPageIndex = 0; // Tracks the current section index in navOptions
+      let currentActiveTargetId = navOptions[0].target; // Keep track of the currently active section
+
+      const navOptionsWrapper = document.querySelector('.nav-options-wrapper');
+      const prevButton = document.getElementById('nav-prev');
+      const nextButton = document.getElementById('nav-next');
+      const allContentSections = document.querySelectorAll('.content-section');
+      const mainAppTitle = document.getElementById('mainAppTitle');
+
+      // Updates the active state of navigation buttons visually
+      const updateNavButtonActiveStates = () => {
+        const visibleButtons = navOptionsWrapper.querySelectorAll('.nav-control-btn');
+        visibleButtons.forEach(button => {
+          if (button.dataset.target === currentActiveTargetId) {
+            button.classList.add('active');
+          } else {
+            button.classList.remove('active');
+          }
+        });
+      };
+
+      // Displays the selected content section and hides others
+      const setActiveSection = (targetId) => {
+        currentActiveTargetId = targetId;
+        allContentSections.forEach(section => {
+          if (section.id === targetId) {
+            section.classList.remove('hidden');
+            // Scroll to top when a new section is activated
+            section.scrollTop = 0;
+          } else {
+            section.classList.add('hidden');
+          }
+        });
+        updateNavButtonActiveStates();
+
+        // Update the main app title based on the active section
+        const activeOption = navOptions.find(option => option.target === targetId);
+        if (activeOption) {
+            mainAppTitle.textContent = activeOption.label.toUpperCase() + " HUB";
+            if (activeOption.target === 'financial-content') {
+                // Special case for financial content, update title to "Client Accounts"
+                mainAppTitle.textContent = "CLIENT ACCOUNTS";
+                // Also ensure the financial view is in list mode when activated from nav
+                switchToListView();
+            }
+        } else {
+            mainAppTitle.textContent = "PMD742OMNI HUB"; // Default title
+        }
+      };
+
+      // Renders the current set of navigation buttons based on currentPageIndex
+      const renderNavButtons = () => {
+        navOptionsWrapper.innerHTML = ''; // Clear existing buttons
+
+        if (navOptions.length === 0) {
+            return; // No options to render
+        }
+
+        // Always show only one button at a time in the center
+        const option = navOptions[currentPageIndex];
+        const button = document.createElement('button');
+        button.classList.add('nav-control-btn');
+        button.textContent = option.label;
+        button.dataset.target = option.target;
+        button.addEventListener('click', function () {
+          setActiveSection(this.dataset.target);
+        });
+        navOptionsWrapper.appendChild(button);
+
+        updateNavButtonActiveStates();
+        updateToggleButtons(); // Update disabled state of prev/next buttons
+      };
+
+      // Updates the disabled state of the previous/next navigation buttons
+      const updateToggleButtons = () => {
+        prevButton.disabled = currentPageIndex === 0;
+        nextButton.disabled = currentPageIndex === navOptions.length - 1;
+      };
+
+      // Event listener for the 'Previous' button
+      prevButton.addEventListener('click', function () {
+        if (currentPageIndex > 0) {
+          currentPageIndex--;
+          renderNavButtons();
+          setActiveSection(navOptions[currentPageIndex].target); // Activate the new section
+        }
+      });
+
+      // Event listener for the 'Next' button
+      nextButton.addEventListener('click', function () {
+        if (currentPageIndex < navOptions.length - 1) {
+          currentPageIndex++;
+          renderNavButtons();
+          setActiveSection(navOptions[currentPageIndex].target); // Activate the new section
+        }
+      });
+
+      // --- Client Accounts App Logic (Integrated from client_balance.html) ---
+      const loader = document.getElementById('loader');
+      const clientListView = document.getElementById('clientListView');
+      const clientDetailView = document.getElementById('clientDetailView');
+      const searchInput = document.getElementById('searchInput');
+      const clientNameListElement = document.getElementById('clientNameListElement');
+      const noClientsInListMessage = document.getElementById('noClientsInListMessage');
+      const backButton = document.getElementById('backButton');
+
+      // Detail View elements
+      const detailClientName = document.getElementById('detailClientName');
+      const clientBalancesContainer = document.getElementById('clientBalancesContainer');
+      const detailClientLastUpdated = document.getElementById('detailClientLastUpdated');
+
+      // Client Data
+      const clientsData = [
+          {
+              id: 1,
+              name: "Petros Njabulo Dube",
+              balances: [
+                  { label: "Main Debt", amount: 995.00, currency: "R" },
+                  { label: "Loan A", amount: 200.00, currency: "$" },
+                  { label: "Service Fee", amount: 50.00, currency: "R" }
+              ],
+              lastUpdated: "May 21, 2025"
+          },
+          {
+              id: 2,
+              name: "Ocean Thabo Mlilo",
+              balances: [
+                  { label: "Checking", amount: 17.94, currency: "$" },
+                  { label: "Savings", amount: -500.00, currency: "$" } // Example of credit
+              ],
+              lastUpdated: "May 21, 2025"
+          },
+          {
+              id: 3,
+              name: "Charmaine Nokuthula Khumalo",
+              balances: [
+                  { label: "Overdue Invoice", amount: 300.75, currency: "R" }
+              ],
+              lastUpdated: "May 20, 2025"
+          },
+          {
+              id: 4,
+              name: "Diana Nokuthula Ngwenya",
+              balances: [
+                  { label: "Project Fee", amount: 85.00, currency: "R" }
+              ],
+              lastUpdated: "May 15, 2025"
+          },
+          {
+              id: 5,
+              name: "Edward Thulani Moyo",
+              balances: [
+                  { label: "Installment 1", amount: 450.20, currency: "R" },
+                  { label: "Installment 2", amount: 250.00, currency: "R" }
+              ],
+              lastUpdated: "May 21, 2025"
+          },
+          {
+              id: 6,
+              name: "Fiona Thando Dewa",
+              balances: [
+                  { label: "Subscription", amount: 25, currency: "R" }
+              ],
+              lastUpdated: "May 21, 2025"
+          },
+          {
+              id: 7,
+              name: "George Kuda Katsidzira",
+              balances: [
+                  { label: "Outstanding Balance", amount: 199.99, currency: "R" }
+              ],
+              lastUpdated: "May 17, 2025"
+          },
+          {
+              id: 8,
+              name: "Harriet Nomaxhesha Ncube",
+              balances: [
+                  { label: "Credit", amount: -0.30, currency: "$" }
+              ],
+              lastUpdated: "May 20, 2025"
+          },
+          {
+              id: 9,
+              name: "Isaac Vusumuzi Ndlovu",
+              balances: [
+                  { label: "Loan Repayment", amount: 1200.00, currency: "R" }
+              ],
+              lastUpdated: "May 22, 2025"
+          },
+          {
+              id: 10,
+              name: "Joyce Sipho Sibanda",
+              balances: [
+                  { label: "Refund Due", amount: -50.00, currency: "$" }
+              ],
+              lastUpdated: "May 22, 2025"
+          },
+          {
+              id: 11,
+              name: "Kenneth Tafadzwa Ncube",
+              balances: [
+                  { label: "Service Charge", amount: 75.50, currency: "R" }
+              ],
+              lastUpdated: "May 21, 2025"
+          },
+          {
+              id: 12,
+              name: "Lindiwe Memory Moyo",
+              balances: [
+                  { label: "Invoice 123", amount: 210.00, currency: "R" }
+              ],
+              lastUpdated: "May 20, 2025"
+          },
+          {
+              id: 13,
+              name: "Mthulisi Blessing Nxumalo",
+              balances: [
+                  { label: "Small Debt", amount: 15.00, currency: "$" }
+              ],
+              lastUpdated: "May 19, 2025"
+          },
+          {
+              id: 14,
+              name: "Nomalanga Bridget Dube",
+              balances: [
+                  { label: "Overpayment", amount: -100.00, currency: "R" }
+              ],
+              lastUpdated: "May 18, 2025"
+          },
+          {
+              id: 15,
+              name: "Oscar P. Gumbo",
+              balances: [
+                  { label: "Payment Due", amount: 600.00, currency: "R" }
+              ],
+              lastUpdated: "May 22, 2025"
+          },
+          {
+              id: 16,
+              name: "Precious Rutendo Shumba",
+              balances: [
+                  { label: "Outstanding", amount: 35.75, currency: "$" }
+              ],
+              lastUpdated: "May 21, 2025"
+          },
+          {
+              id: 17,
+              name: "Queen Nomusa Gumede",
+              balances: [
+                  { label: "Prepaid", amount: -250.00, currency: "R" }
+              ],
+              lastUpdated: "May 20, 2025"
+          },
+          {
+              id: 18,
+              name: "Ronald Tafara Ncube",
+              balances: [
+                  { label: "Tiny Balance", amount: 9.99, currency: "$" }
+              ],
+              lastUpdated: "May 19, 2025"
+          },
+          {
+              id: 19,
+              name: "Sibusisiwe Faith Sibanda",
+              balances: [
+                  { label: "Amount Owed", amount: 420.00, currency: "R" }
+              ],
+              lastUpdated: "May 18, 2025"
+          },
+          {
+              id: 20,
+              name: "Thandiwe Grace Khumalo",
+              balances: [
+                  { label: "Customer Credit", amount: -75.00, currency: "$" }
+              ],
+              lastUpdated: "May 17, 2025"
+          }
+      ];
+
+      let currentFilteredClients = [];
+
+      function showLoader() {
+          loader.style.display = 'block';
+      }
+
+      function hideLoader() {
+          loader.style.display = 'none';
+      }
+
+      function switchToListView() {
+          clientDetailView.classList.remove('active');
+          clientListView.classList.add('active');
+          searchInput.value = '';
+          currentFilteredClients = [...clientsData];
+          renderClientList();
+          mainAppTitle.textContent = "CLIENT ACCOUNTS"; // Ensure main header is "Client Accounts"
+      }
+
+      function switchToDetailView() {
+          clientListView.classList.remove('active');
+          clientDetailView.classList.add('active');
+      }
+
+      function renderClientList() {
+          showLoader();
+          clientNameListElement.innerHTML = '';
+          noClientsInListMessage.style.display = 'none';
+
+          setTimeout(() => {
+              if (currentFilteredClients.length === 0) {
+                  noClientsInListMessage.style.display = 'block';
+              } else {
+                  currentFilteredClients.forEach(client => {
+                      const listItem = document.createElement('li');
+                      listItem.classList.add('client-name-item');
+                      listItem.textContent = client.name;
+                      listItem.setAttribute('data-client-id', client.id);
+                      listItem.addEventListener('click', () => handleClientSelection(client.id));
+                      clientNameListElement.appendChild(listItem);
+                  });
+              }
+              hideLoader();
+          }, 200);
+      }
+
+      function handleClientSelection(clientId) {
+          showLoader();
+          const selectedClient = clientsData.find(client => client.id === clientId);
+          if (selectedClient) {
+              setTimeout(() => {
+                  detailClientName.textContent = selectedClient.name;
+                  clientBalancesContainer.innerHTML = '';
+
+                  if (selectedClient.balances && selectedClient.balances.length > 0) {
+                      selectedClient.balances.forEach(balance => {
+                          const balanceItem = document.createElement('div');
+                          balanceItem.classList.add('balance-item');
+
+                          const balanceLabel = document.createElement('span');
+                          balanceLabel.classList.add('balance-label');
+                          balanceLabel.textContent = balance.label + ":";
+                          balanceItem.appendChild(balanceLabel);
+
+                          const balanceAmount = document.createElement('span');
+                          balanceAmount.classList.add('balance-amount');
+                          const formattedAmount = balance.currency + " " + Math.abs(balance.amount).toFixed(2);
+                          balanceAmount.textContent = formattedAmount;
+
+                          balanceAmount.classList.remove('debt-positive', 'debt-negative');
+                          if (balance.amount > 0) {
+                              balanceAmount.classList.add('debt-positive');
+                          } else if (balance.amount < 0) {
+                              balanceAmount.classList.add('debt-negative');
+                          }
+
+                          balanceItem.appendChild(balanceAmount);
+                          clientBalancesContainer.appendChild(balanceItem);
+                      });
+                  } else {
+                      const noBalancesMessage = document.createElement('p');
+                      noBalancesMessage.textContent = "No balance information available.";
+                      noBalancesMessage.style.color = 'var(--sys-color-on-surface-variant)';
+                      noBalancesMessage.style.padding = '1rem';
+                      clientBalancesContainer.appendChild(noBalancesMessage);
+                  }
+
+                  detailClientLastUpdated.textContent = selectedClient.lastUpdated;
+
+                  switchToDetailView();
+                  hideLoader();
+              }, 200);
+          } else {
+              console.error("Client not found!");
+              hideLoader();
+              switchToListView();
+          }
+      }
+
+      function filterClientList() {
+          const searchTerm = searchInput.value.toLowerCase().trim();
+
+          if (searchTerm === '') {
+              currentFilteredClients = [...clientsData];
+          } else {
+              currentFilteredClients = clientsData.filter(client =>
+                  client.name.toLowerCase().includes(searchTerm)
+              );
+          }
+
+          if (clientDetailView.classList.contains('active')) {
+              switchToListView();
+          } else {
+              renderClientList();
+          }
+      }
+
+      // --- Initialization ---
+      setupThreeJS();
+      createFloatingElements();
+      renderNavButtons(); // Render initial navigation buttons
+      setActiveSection(currentActiveTargetId); // Set the initial active section
+
+      // Client Accounts App specific initialization
+      clientsData.sort((a, b) => a.name.localeCompare(b.name));
+      currentFilteredClients = [...clientsData];
+
+      if (!clientsData || clientsData.length === 0) {
+          noClientsInListMessage.textContent = "No account data has been entered. Please update the JavaScript file.";
+          noClientsInListMessage.style.display = 'block';
+          searchInput.style.display = 'none';
+      } else {
+          // Initial render of the full list will happen when Financial section is activated
+      }
+
+      // Attach event listeners for Client Accounts App
+      searchInput.addEventListener('input', filterClientList);
+      backButton.addEventListener('click', switchToListView);
+    });
+  </script>
+</body>
+</html>
