@@ -495,3 +495,21 @@
 - **Codename**: Organic Cyan Motif.
 
 ---
+
+## 2026-04-09, Thursday, 18:13:00
+### v0.5.6-alpha — Global Responsive Matrix
+
+- **Action**: Liberated the entire application from its strict mobile bounds (`430px`) by rolling out a responsive, dual-mode Desktop & Mobile architecture and forcefully injecting the Organic Cyan Motif layout globally into the `body`.
+- **CSS Grid Architecture (`index.css`)**:
+  - Inserted comprehensive `@media (min-width: 1024px)` overrides to enable a pure horizontal layout for Desktop interfaces.
+  - Dynamically refactored the Dashboard components (`.dashboard-grid`, `.stats-grid`) to intelligently span four columns horizontally on PC, resolving previous vertical-flow restrictions.
+- **Global Theme Injection**: The Ndebele SVG interlace motif, earthy-slate linear gradients, and breathing cyan ambient orbs were successfully hoisted up into the `index.css` root `body` tag, completely eradicating the dead generic background patterns.
+- **Component Fluidity & Data Mapping**:
+  - `Sidebar.jsx`: Integrated React Context (`useAuth`) to fetch the LIVE user avatar texts and active profile metadata dynamically, and upgraded its housing layout into a stunning, always-open Frosted Glass chassis (`backdrop-filter: blur(24px)`) tailored exclusively for the desktop breakpoint.
+  - `Topbar.jsx`: Streamlined into a floating layout incorporating identical frosted treatments, securely detecting active route pathnames natively.
+  - `BottomNav.jsx`: Extracted core styles locally to execute a completely seamless ultra-frosted glass iOS-style anchor menu that is explicitly hidden when scaling viewport up to the desktop limit.
+- **Files Modified**: `frontend/src/index.css`, `frontend/src/components/layout/Sidebar.jsx`, `frontend/src/components/layout/Topbar.jsx`, `frontend/src/components/layout/BottomNav.jsx`.
+- **Version**: `0.5.6-alpha`.
+- **Codename**: Global Responsive Matrix.
+
+---

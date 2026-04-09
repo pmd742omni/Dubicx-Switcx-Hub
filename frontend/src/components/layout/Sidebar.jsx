@@ -1,6 +1,12 @@
 import { NavLink } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 const Sidebar = () => {
+  const { user } = useAuth();
+  
+  // Basic avatar derivation
+  const avatarText = user?.display_name ? user.display_name.substring(0,2).toUpperCase() : 'DS';
+
   return (
     <aside className="sidebar">
       <div className="sidebar-brand">
@@ -10,10 +16,10 @@ const Sidebar = () => {
       
       <div className="sidebar-profile">
         <div className="profile-avatar">
-          <span>IG</span>
+          <span>{avatarText}</span>
         </div>
         <div className="profile-info">
-          <div className="profile-name">Test User</div>
+          <div className="profile-name">{user?.display_name || 'Guest User'}</div>
           <div className="profile-roles">Customer · Merchant</div>
         </div>
       </div>
@@ -39,9 +45,9 @@ const Sidebar = () => {
         </NavLink>
       </nav>
       
-      <div className="sidebar-status">
-        <span className="status-dot"></span>
-        <span className="sidebar-status-text">System Online</span>
+      <div className="sidebar-status" style={{ marginTop: 'auto', display: 'flex', alignItems: 'center', gap: '8px', padding: '12px', background: 'rgba(0,190,210,0.05)', borderRadius: '12px' }}>
+        <span className="status-dot" style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#00e676', boxShadow: '0 0 8px #00e676' }}></span>
+        <span className="sidebar-status-text" style={{ fontSize: '11px', color: '#00e676', fontWeight: '600' }}>OS Online</span>
       </div>
     </aside>
   );
