@@ -543,3 +543,38 @@
 
 ---
 
+## 2026-04-09, Thursday, 19:17:32
+### v0.5.8-alpha - Mobile Dashboard Scroll Finalization
+
+- **Problem**: The dashboard still did not scroll reliably on the phone even after the earlier React shell fix. This indicated the issue was not limited to a single scroll container.
+
+- **Root Cause**:
+  - The project currently contains two mobile-facing frontend shells:
+    - `frontend/src/index.css` for the React/Vite SPA.
+    - `index.html` for the legacy standalone shell still present at the repo root.
+  - Both shells were using a viewport-locked mobile layout based on fixed `100vh`/`100dvh` containers combined with hidden overflow, which is fragile on mobile browsers and can block natural vertical scrolling.
+  - The bottom navigation also depended on the content shell layout instead of being pinned independently, which increased the chance of scroll conflicts on phones.
+
+- **Fix Implemented**:
+  - Updated the React mobile shell in `frontend/src/index.css`:
+    - Switched mobile shell wrappers from fixed height to `min-height`.
+    - Allowed `body` to scroll vertically again with `overflow-y: auto`.
+    - Changed mobile app wrappers from hidden overflow to visible overflow.
+    - Added extra bottom spacing to the page content so the fixed bottom nav does not cover the last dashboard content.
+    - Pinned the mobile bottom nav with `position: fixed` and preserved the centered `430px` mobile shell width.
+  - Updated the legacy root shell in `index.html` with the same mobile scrolling strategy so the deployed/static path and the React path behave consistently.
+
+- **Verification**:
+  - Confirmed the new mobile scrolling rules exist in both `frontend/src/index.css` and `index.html`.
+  - Confirmed the fixed bottom-nav rules and extra bottom padding are now present in both shells.
+  - Full mobile device runtime verification was not possible from this environment.
+
+- **Files Modified**:
+  - `frontend/src/index.css` - switched the React mobile shell to natural page scrolling.
+  - `index.html` - applied the same mobile scrolling fix to the legacy standalone shell.
+  - `PROJECT_LOG.md` - This entry.
+
+- **Version**: `0.5.8-alpha`.
+- **Codename**: Scroll Finalization.
+
+---
