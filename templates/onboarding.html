@@ -9,10 +9,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
   <style>
+    /* Override the global body overflow:hidden so this page can scroll */
+    html, body { overflow: auto !important; overflow-y: auto !important; height: auto !important; }
     .onboard-wrapper {
       min-height: 100vh; min-height: 100dvh;
-      display: flex; align-items: center; justify-content: center;
-      padding: 24px; position: relative; overflow: hidden;
+      display: flex; align-items: flex-start; justify-content: center;
+      padding: 24px; padding-top: 40px; padding-bottom: 60px;
+      position: relative;
     }
     .onboard-wrapper::before {
       content: ''; position: absolute;

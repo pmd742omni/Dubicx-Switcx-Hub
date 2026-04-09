@@ -396,3 +396,30 @@
 - **Codename**: Financial OS.
 
 ---
+
+## 2026-04-09, Thursday, 15:00:00
+### v0.5.1 — Hotfix: Mobile Scroll Lock on Auth & Onboarding Pages
+
+- **Bug**: On mobile devices, the onboarding page (and login/register) would not scroll. Users could not reach the Merchant/Stakeholder toggles or the "Enter the Hub" button because the content extended below the viewport.
+
+- **Root Cause**: The global `body { overflow: hidden; }` rule in `style.css` (line 80) is intended for the SPA shell to prevent body scrolling while the `.page-container` handles internal scroll. However, auth pages (login, register, onboarding) are **standalone pages** that inherit this rule, which blocks all scrolling when their content exceeds the viewport height.
+
+- **Fix**: Added per-page CSS overrides in each template's `<style>` block:
+  ```css
+  html, body { overflow: auto !important; overflow-y: auto !important; height: auto !important; }
+  ```
+  Additionally:
+  - Changed `align-items: center` → `align-items: flex-start` so the card starts from the top rather than centering vertically (which clips content on short screens).
+  - Removed `overflow: hidden` from wrapper divs.
+  - Added generous `padding-bottom` (48–60px) to ensure the CTA button has breathing room at the bottom of the scroll.
+
+- **Files Modified**:
+  - `templates/onboarding.html` — body overflow override + flex-start alignment.
+  - `templates/login.html` — body overflow override + flex-start alignment.
+  - `templates/register.html` — body overflow override + flex-start alignment.
+  - `PROJECT_LOG.md` — This entry.
+
+- **Version**: `0.5.1-alpha`.
+- **Codename**: Scroll Breaker.
+
+---
