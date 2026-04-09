@@ -461,3 +461,19 @@
 - **Codename**: React Router Foundation.
 
 ---
+
+## 2026-04-09, Thursday, 17:03:00
+### v0.5.4-alpha — Fully Decoupled API Architecture 
+
+- **Migration**: Eradicated the legacy monolithic Flask architecture by deleting the obsolete `templates/` and `static/js/` folders entirely from the workspace.
+- **Backend Refactoring**: Stripped Flask's HTML-rendering views from `app.py`. Authenticaton routes (`/login`, `/register`, `/logout`) are now exclusively strict JSON REST API endpoints serving at `/api/*`. 
+- **Frontend State Binding**: 
+  - Constructed the master `AuthContext.jsx` context provider to handle global session persistence natively querying `/api/me`.
+  - Bound `Dashboard.jsx` using `useEffect` arrays to synchronously fetch and hydrate dynamic SQL properties (`total_revenue`, `total_sales`, `cash_at_hand`).
+- **Network Proxying**: Engineered a local Vite proxy (`vite.config.js`) seamlessly interconnecting the `http://localhost:5173/api/` frontend bridge to the isolated Flask API port (`127.0.0.1:5000`).
+- **Files Deleted**: `templates/*`, `static/js/*`.
+- **Files Modified**: `app.py`, `vite.config.js`, `frontend/src/context/AuthContext.jsx`, `frontend/src/App.jsx`, `frontend/src/pages/Dashboard/Dashboard.jsx`, `frontend/src/pages/Auth/Login.jsx`, `frontend/src/pages/Auth/Register.jsx`.
+- **Version**: `0.5.4-alpha`.
+- **Codename**: API Data Bridge.
+
+---

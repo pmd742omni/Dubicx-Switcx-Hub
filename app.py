@@ -211,83 +211,57 @@ def calculate_token_value(user_id):
 # Auth Routes
 # ──────────────────────────────────────────────
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/api/login', methods=['POST'])
 def login():
-    if 'user_id' in session:
-        return redirect(url_for('index'))
-    if request.method == 'POST':
-        username = request.form.get('username', '').strip().lower()
-        password = request.form.get('password', '')
-        db = get_db()
-        user = db.execute('SELECT * FROM users WHERE username = ?', (username,)).fetchone()
-        if user and check_password_hash(user['password_hash'], password):
-            session['user_id'] = user['id']
-            session['display_name'] = user['display_name']
-            session['theme'] = user['theme'] or 'dark-cyan'
-            session['roles'] = get_user_roles(user['id'])
-            return redirect(url_for('index'))
-        return render_template('login.html', error='Invalid username or password')
-    return render_template('login.html')
+    data = request.get_json() or {}
+    username = data.get('username', '').strip().lower()
+    password = data.get('password', '')
+    db = get_db()
+    user = db.execute('SELECT * FROM users WHERE username = ?', (username,)).fetchone()
+    if user and check_password_hash(user['password_hash'], password):
+        session['user_id'] = user['id']
+        session['display_name'] = user['display_name']
+        session['theme'] = user['theme'] or 'dark-cyan'
+        session['roles'] = get_user_roles(user['id'])
+        return jsonify({'success': True})
+    return jsonify({'error': 'Invalid username or password'}), 401
 
-@app.route('/register', methods=['GET', 'POST'])
+@app.route('/api/register', methods=['POST'])
 def register():
-    if 'user_id' in session:
-        return redirect(url_for('index'))
-    if request.method == 'POST':
-        display_name = request.form.get('display_name', '').strip()
-        username = request.form.get('username', '').strip().lower()
-        password = request.form.get('password', '')
-        confirm = request.form.get('confirm_password', '')
-        if not display_name or not username or not password:
-            return render_template('register.html', error='All fields are required')
-        if len(username) < 3:
-            return render_template('register.html', error='Username must be at least 3 characters')
-        if len(password) < 4:
-            return render_template('register.html', error='Password must be at least 4 characters')
-        if password != confirm:
-            return render_template('register.html', error='Passwords do not match')
-        db = get_db()
-        if db.execute('SELECT id FROM users WHERE username = ?', (username,)).fetchone():
-            return render_template('register.html', error='Username taken')
-        pw_hash = generate_password_hash(password)
-        cursor = db.execute('INSERT INTO users (username, password_hash, display_name) VALUES (?, ?, ?)', (username, pw_hash, display_name))
-        user_id = cursor.lastrowid
-        # Every user starts as a customer
-        db.execute('INSERT INTO user_roles (user_id, role) VALUES (?, ?)', (user_id, 'customer'))
-        db.execute('INSERT INTO token_state (user_id) VALUES (?)', (user_id,))
-        db.execute('INSERT INTO business_profile (user_id, owner_name) VALUES (?, ?)', (user_id, display_name))
-        db.commit()
-        session['user_id'] = user_id
-        session['display_name'] = display_name
-        session['theme'] = 'dark-cyan'
-        session['roles'] = ['customer']
-        return redirect(url_for('onboarding'))
-    return render_template('register.html')
+    data = request.get_json() or {}
+    display_name = data.get('display_name', '').strip()
+    username = data.get('username', '').strip().lower()
+    password = data.get('password', '')
+    
+    if not display_name or not username or not password:
+        return jsonify({'error': 'All fields are required'}), 400
+    if len(username) < 3:
+        return jsonify({'error': 'Username must be at least 3 characters'}), 400
+    if len(password) < 4:
+        return jsonify({'error': 'Password must be at least 4 characters'}), 400
+        
+    db = get_db()
+    if db.execute('SELECT id FROM users WHERE username = ?', (username,)).fetchone():
+        return jsonify({'error': 'Username taken'}), 400
+        
+    pw_hash = generate_password_hash(password)
+    cursor = db.execute('INSERT INTO users (username, password_hash, display_name) VALUES (?, ?, ?)', (username, pw_hash, display_name))
+    user_id = cursor.lastrowid
+    db.execute('INSERT INTO user_roles (user_id, role) VALUES (?, ?)', (user_id, 'customer'))
+    db.execute('INSERT INTO token_state (user_id) VALUES (?)', (user_id,))
+    db.execute('INSERT INTO business_profile (user_id, owner_name) VALUES (?, ?)', (user_id, display_name))
+    db.commit()
+    
+    session['user_id'] = user_id
+    session['display_name'] = display_name
+    session['theme'] = 'dark-cyan'
+    session['roles'] = ['customer']
+    return jsonify({'success': True})
 
-@app.route('/onboarding')
-@login_required
-def onboarding():
-    return render_template('onboarding.html', display_name=session.get('display_name', 'User'))
-
-@app.route('/logout')
+@app.route('/api/logout', methods=['POST'])
 def logout():
     session.clear()
-    return redirect(url_for('login'))
-
-# ──────────────────────────────────────────────
-# Page Routes
-# ──────────────────────────────────────────────
-
-@app.route('/')
-@login_required
-def index():
-    user = get_db().execute('SELECT * FROM users WHERE id = ?', (uid(),)).fetchone()
-    roles = get_user_roles(uid())
-    return render_template('index.html',
-        display_name=session.get('display_name', 'User'),
-        theme=user['theme'] or 'dark-cyan',
-        roles=roles,
-        profile_photo=user['profile_photo'] or '')
+    return jsonify({'success': True})
 
 # ──────────────────────────────────────────────
 # API — User / Profile
