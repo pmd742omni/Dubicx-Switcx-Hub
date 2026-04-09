@@ -513,3 +513,33 @@
 - **Codename**: Global Responsive Matrix.
 
 ---
+
+## 2026-04-09, Thursday, 18:40:24
+### v0.5.7-alpha - Mobile Scroll Restoration in React Shell
+
+- **Bug**: On mobile devices, the React/Vite app shell rendered correctly but would not scroll vertically inside the main content area, making lower sections of routed pages unreachable.
+
+- **Root Cause**:
+  - The intended scroll region was `.page-container`, but its parent `.main-content-wrapper` only had the proper flex-column sizing inside desktop-specific CSS blocks.
+  - On mobile, the scroll container therefore never received a constrained height, so `overflow-y: auto` could not engage as an actual touch-scroll surface.
+  - Because the shell still uses locked outer containers for the app-frame effect, this missing flex sizing blocked mobile scrolling completely.
+
+- **Fix Implemented** (`frontend/src/index.css`):
+  - Added a default `.main-content-wrapper` rule with `flex: 1`, `display: flex`, `flex-direction: column`, `min-height: 0`, and `overflow: hidden`.
+  - Updated `.page-container` with `min-height: 0` to allow proper shrinking inside nested flex layouts.
+  - Added `-webkit-overflow-scrolling: touch` to restore smooth mobile momentum scrolling behavior, especially on iOS-class browsers.
+  - Preserved the existing desktop shell and responsive breakpoint behavior.
+
+- **Verification**:
+  - Confirmed the new CSS rules were applied in the expected locations inside `frontend/src/index.css`.
+  - Attempted `npm run build` in `frontend/`, but environment-level verification is currently blocked by a Windows `spawn EPERM` error while Vite loads `vite.config.js`.
+
+- **Files Modified**:
+  - `frontend/src/index.css` â€” fixed mobile scroll behavior inside the React shell.
+  - `PROJECT_LOG.md` â€” This entry.
+
+- **Version**: `0.5.7-alpha`.
+- **Codename**: Mobile Scroll Restoration.
+
+---
+

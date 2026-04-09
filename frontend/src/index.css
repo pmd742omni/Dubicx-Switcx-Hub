@@ -107,6 +107,14 @@ body::after {
   overflow: hidden;
 }
 
+.main-content-wrapper {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
 /* ---- Ambient Glow ---- */
 .app::before {
   content: '';
@@ -206,6 +214,7 @@ body::after {
    ================================================================ */
 .page-container {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
   padding: 0 var(--space-lg);
@@ -213,6 +222,7 @@ body::after {
   position: relative;
   z-index: 5;
   scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
 
   -ms-overflow-style: none;
   scrollbar-width: none;
