@@ -1,35 +1,72 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import AuthStyles from './AuthStyles';
+import { useAuth } from '../../context/AuthContext';
 
 const Onboarding = () => {
+  const { user } = useAuth();
   const navigate = useNavigate();
-  return (
-    <div className="auth-page" style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
-      <div className="auth-card" style={{ padding: '24px', background: 'var(--bg-card)', borderRadius: '12px', maxWidth: '400px' }}>
-        <h2>Welcome to the Hub</h2>
-        <p>Select your capabilities</p>
-        
-        <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-           <div style={{ padding: '12px', border: '1px solid var(--border-default)', borderRadius: '8px' }}>
-             <strong>🛒 Customer</strong>
-             <p style={{fontSize: '12px', color: 'var(--text-secondary)'}}>Standard wallet access.</p>
-           </div>
-           <div style={{ padding: '12px', border: '1px solid var(--border-default)', borderRadius: '8px' }}>
-             <strong>🏪 Merchant</strong>
-             <p style={{fontSize: '12px', color: 'var(--text-secondary)'}}>Manage inventory and sales.</p>
-             <button className="modal-action-pill active">Enable</button>
-           </div>
-           <div style={{ padding: '12px', border: '1px solid var(--border-default)', borderRadius: '8px' }}>
-             <strong>📈 Stakeholder</strong>
-             <p style={{fontSize: '12px', color: 'var(--text-secondary)'}}>Invest and monitor ROI.</p>
-             <button className="modal-action-pill">Enable</button>
-           </div>
-        </div>
 
-        <button className="modal-primary-btn" style={{ width: '100%', marginTop: '24px' }} onClick={() => navigate('/dashboard')}>
-          Enter the Hub
-        </button>
+  // Local state for UI interactivity only; real toggles normally hit `/api/roles/toggle`
+  const [activeRoles, setActiveRoles] = useState(['customer']);
+
+  const toggleRole = async (role) => {
+    // Demo implementation for visual toggle
+    if (role === 'customer') return; // Customer is base role
+    
+    // In reality, we would call fetch('/api/roles/toggle', { method: 'POST', body: JSON.stringify({role}) })
+    setActiveRoles(prev => 
+      prev.includes(role) ? prev.filter(r => r !== role) : [...prev, role]
+    );
+  };
+
+  return (
+    <>
+      <AuthStyles />
+      <div className="auth-container">
+        <div className="motif-pattern"></div>
+        <div className="ambient-glow"></div>
+        
+        <div className="auth-card-matte" style={{ maxWidth: '440px' }}>
+          <div className="brand-organic" style={{ marginBottom: '16px' }}>⚙️</div>
+          <h2 className="auth-title">Welcome to the Hub</h2>
+          <p className="auth-subtitle">Select your active capabilities</p>
+          
+          <div style={{ marginTop: '24px', marginBottom: '32px' }}>
+             <div className="role-card active" onClick={() => toggleRole('customer')}>
+               <div className="role-icon">🛒</div>
+               <div className="role-info">
+                 <h4>Customer</h4>
+                 <p>Standard wallet access.</p>
+               </div>
+               <div className="role-action">Default</div>
+             </div>
+
+             <div className={`role-card ${activeRoles.includes('merchant') ? 'active' : ''}`} onClick={() => toggleRole('merchant')}>
+               <div className="role-icon">🏪</div>
+               <div className="role-info">
+                 <h4>Merchant</h4>
+                 <p>Manage inventory & sales.</p>
+               </div>
+               <div className="role-action">{activeRoles.includes('merchant') ? 'Enabled' : 'Enable'}</div>
+             </div>
+
+             <div className={`role-card ${activeRoles.includes('stakeholder') ? 'active' : ''}`} onClick={() => toggleRole('stakeholder')}>
+               <div className="role-icon">📈</div>
+               <div className="role-info">
+                 <h4>Stakeholder</h4>
+                 <p>Invest and monitor ROI.</p>
+               </div>
+               <div className="role-action">{activeRoles.includes('stakeholder') ? 'Enabled' : 'Enable'}</div>
+             </div>
+          </div>
+
+          <button className="organic-btn" onClick={() => navigate('/dashboard')}>
+            Enter Financial OS
+          </button>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import AuthStyles from './AuthStyles';
 
 const Register = () => {
   const { register } = useAuth();
@@ -19,18 +20,64 @@ const Register = () => {
   };
 
   return (
-    <div className="auth-page" style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div className="auth-card" style={{ padding: '24px', background: 'var(--bg-card)', borderRadius: '12px' }}>
-        <h2>Create an Account</h2>
-        <form onSubmit={handleSubmit} style={{ marginTop: '20px' }}>
-          {error && <div style={{ color: 'var(--accent-rose)', fontSize: '13px', marginBottom: '12px' }}>{error}</div>}
-          <input className="modal-input" placeholder="Display Name" value={displayName} onChange={e => setDisplayName(e.target.value)} style={{ width: '100%', marginBottom: '12px' }} required />
-          <input className="modal-input" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} style={{ width: '100%', marginBottom: '12px' }} required />
-          <input className="modal-input" type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} style={{ width: '100%', marginBottom: '20px' }} required />
-          <button type="submit" className="modal-primary-btn" style={{ width: '100%' }}>Register</button>
-        </form>
+    <>
+      <AuthStyles />
+      <div className="auth-container">
+        <div className="motif-pattern"></div>
+        <div className="ambient-glow"></div>
+        
+        <div className="auth-card-matte">
+          <div className="brand-organic">DS</div>
+          <h2 className="auth-title">Create Account</h2>
+          <p className="auth-subtitle">Join the Dubicx Switcx ecosystem</p>
+          
+          <form onSubmit={handleSubmit}>
+            {error && <div className="auth-error">{error}</div>}
+            
+            <div className="input-group">
+              <label>Business / Display Name</label>
+              <input 
+                className="organic-input" 
+                placeholder="e.g. My Awesome Shop" 
+                value={displayName} 
+                onChange={e => setDisplayName(e.target.value)} 
+                required 
+              />
+            </div>
+
+            <div className="input-group">
+              <label>Username</label>
+              <input 
+                className="organic-input" 
+                placeholder="Choose a unique handle" 
+                value={username} 
+                onChange={e => setUsername(e.target.value)} 
+                required 
+              />
+            </div>
+            
+            <div className="input-group">
+              <label>Password</label>
+              <input 
+                className="organic-input" 
+                type="password" 
+                placeholder="Secure your account" 
+                value={password} 
+                onChange={e => setPassword(e.target.value)} 
+                required 
+              />
+            </div>
+            
+            <button type="submit" className="organic-btn">Create Account</button>
+          </form>
+
+          <div className="auth-link-box">
+            Already have an account? 
+            <Link to="/login" className="auth-link">Log in</Link>
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
