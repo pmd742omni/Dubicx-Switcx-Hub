@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Welcome — Dubicx Switcx Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <style>
+    .onboard-wrapper {
+      min-height: 100vh; min-height: 100dvh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px; position: relative; overflow: hidden;
+    }
+    .onboard-wrapper::before {
+      content: ''; position: absolute;
+      top: -200px; left: 50%; transform: translateX(-50%);
+      width: 600px; height: 600px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,229,255,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .onboard-card {
+      width: 100%; max-width: 520px;
+      background: var(--bg-card); border: 1px solid var(--border-default);
+      border-radius: var(--radius-lg); padding: 40px 32px;
+      backdrop-filter: blur(12px); position: relative; z-index: 1;
+    }
+    .onboard-greeting {
+      text-align: center; font-size: 28px; font-weight: 800;
+      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-emerald));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+    .onboard-subtitle {
+      text-align: center; font-size: 14px; color: var(--text-secondary);
+      margin-bottom: 32px; line-height: 1.6;
+    }
+    .capability-card {
+      display: flex; align-items: center; gap: 16px;
+      padding: 20px; margin-bottom: 12px;
+      background: var(--bg-primary); border: 1px solid var(--border-default);
+      border-radius: var(--radius-md); cursor: pointer;
+      transition: all 0.25s ease; position: relative;
+    }
+    .capability-card:hover { border-color: var(--accent-cyan); background: rgba(0,229,255,0.03); }
+    .capability-card.active { border-color: var(--accent-emerald); background: rgba(0,230,118,0.06); }
+    .capability-card.active .cap-toggle { background: var(--accent-emerald); }
+    .capability-card.active .cap-toggle::after { transform: translateX(20px); }
+    .capability-card.locked { opacity: 0.5; pointer-events: none; }
+    .cap-icon { font-size: 32px; flex-shrink: 0; }
+    .cap-info { flex: 1; }
+    .cap-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+    .cap-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+    .cap-toggle {
+      width: 44px; height: 24px; border-radius: 12px;
+      background: rgba(255,255,255,0.1); position: relative;
+      flex-shrink: 0; transition: background 0.3s ease;
+    }
+    .cap-toggle::after {
+      content: ''; position: absolute;
+      width: 20px; height: 20px; border-radius: 50%;
+      background: white; top: 2px; left: 2px;
+      transition: transform 0.3s ease;
+    }
+    .onboard-btn {
+      width: 100%; padding: 16px; margin-top: 24px;
+      border: none; border-radius: var(--radius-md);
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-emerald));
+      color: var(--bg-primary); font-family: var(--font);
+      font-size: 15px; font-weight: 700; cursor: pointer;
+      box-shadow: 0 4px 20px rgba(0,229,255,0.2);
+      transition: all 0.2s ease;
+    }
+    .onboard-btn:hover { box-shadow: 0 6px 30px rgba(0,229,255,0.35); transform: translateY(-1px); }
+    .onboard-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+    .onboard-skip {
+      display: block; text-align: center; margin-top: 16px;
+      font-size: 13px; color: var(--text-muted);
+      text-decoration: none; cursor: pointer;
+    }
+    .onboard-skip:hover { color: var(--text-secondary); }
+  </style>
+</head>
+<body>
+  <div class="onboard-wrapper">
+    <div class="onboard-card">
+      <div class="onboard-greeting">Welcome, {{ display_name }}</div>
+      <p class="onboard-subtitle">
+        Unlock capabilities to shape your experience.<br/>
+        You can always change these later in Settings.
+      </p>
+
+      <div class="capability-card active locked" data-role="customer">
+        <div class="cap-icon">🛒</div>
+        <div class="cap-info">
+          <div class="cap-title">Customer</div>
+          <div class="cap-desc">Personal spending tracker, token wallet, browse shops and products.</div>
+        </div>
+        <div class="cap-toggle"></div>
+      </div>
+
+      <div class="capability-card" data-role="merchant" onclick="toggleCap(this)">
+        <div class="cap-icon">🏪</div>
+        <div class="cap-info">
+          <div class="cap-title">Merchant</div>
+          <div class="cap-desc">Retail management — inventory, liquidity, sales tracking, change orchestration.</div>
+        </div>
+        <div class="cap-toggle"></div>
+      </div>
+
+      <div class="capability-card" data-role="stakeholder" onclick="toggleCap(this)">
+        <div class="cap-icon">📈</div>
+        <div class="cap-info">
+          <div class="cap-title">Stakeholder</div>
+          <div class="cap-desc">Invest in the network — monitor ROI, dividends, and participate in governance.</div>
+        </div>
+        <div class="cap-toggle"></div>
+      </div>
+
+      <button class="onboard-btn" id="continueBtn" onclick="finishOnboarding()">Enter the Hub →</button>
+      <a class="onboard-skip" href="/">Skip for now</a>
+    </div>
+  </div>
+
+  <script>
+    const activatedRoles = new Set();
+
+    function toggleCap(el) {
+      const role = el.dataset.role;
+      if (el.classList.contains('locked')) return;
+      el.classList.toggle('active');
+      if (el.classList.contains('active')) { activatedRoles.add(role); } else { activatedRoles.delete(role); }
+    }
+
+    async function finishOnboarding() {
+      const btn = document.getElementById('continueBtn');
+      btn.disabled = true; btn.textContent = 'Setting up...';
+      for (const role of activatedRoles) {
+        await fetch('/api/roles/toggle', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ role })
+        });
+      }
+      window.location.href = '/';
+    }
+  </script>
+</body>
+</html>

@@ -2,1497 +2,1701 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PMD742OMNI HUB</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description" content="Dubicx Switcx Hub — Digital Twin Dashboard for smart vending management, tokenized wealth, and meta-economy." />
+  <meta name="theme-color" content="#0a0e1a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Dubicx Switcx Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
-    /*
-     * CSS Custom Properties (Variables)
-     * Material 3 Expressive Tonal Palette (derived from Cyan) for a dark, futuristic theme.
-     */
+    /* ================================================================
+       DESIGN SYSTEM — Dubicx Switcx Hub
+       Mobile-first: Samsung Galaxy A32 (412×915 CSS px)
+       ================================================================ */
+
     :root {
-      /* Primary Colors (Cyan Accent) */
-      --sys-color-primary: #00ffff; /* Main accent color */
-      --sys-color-on-primary: #000000; /* Text on primary */
-      --sys-color-primary-container: rgba(0, 255, 255, 0.25); /* More prominent primary shade */
-      --sys-color-on-primary-container: #ffffff; /* Text on primary container */
+      /* ---- Palette ---- */
+      --bg-primary: #0a0e1a;
+      --bg-secondary: #111627;
+      --bg-card: rgba(17, 22, 39, 0.85);
+      --bg-card-hover: rgba(25, 32, 55, 0.95);
+      --bg-glass: rgba(17, 22, 39, 0.55);
 
-      /* Neutral/Surface Colors (Dark Theme) */
-      --sys-color-background: #0a0a2e; /* Deep dark blue background */
-      --sys-color-on-background: #e0e0e0; /* Main text on background */
-      --sys-color-surface: #1e1e1e; /* Card/section background */
-      --sys-color-on-surface: #f0f0f0; /* Text on surface */
-      --sys-color-surface-variant: rgba(30, 30, 30, 0.9); /* Slightly different surface shade with opacity */
-      --sys-color-on-surface-variant: #cccccc; /* Secondary text on surface variant */
+      --accent-cyan: #00e5ff;
+      --accent-emerald: #00e676;
+      --accent-amber: #ffab40;
+      --accent-rose: #ff5252;
+      --accent-purple: #b388ff;
 
-      /* Outline/Border Colors */
-      --sys-color-outline: rgba(255, 255, 255, 0.15); /* General borders */
-      --sys-color-outline-variant: rgba(0, 255, 255, 0.4); /* Accent borders */
+      --text-primary: #eaf0ff;
+      --text-secondary: #8892b0;
+      --text-muted: #4a5578;
 
-      /* Shadows (Cyber Glow) */
-      --sys-shadow-accent-light: rgba(0, 255, 255, 0.4);
-      --sys-shadow-accent-medium: rgba(0, 255, 255, 0.6);
-      --sys-shadow-dark: rgba(0, 0, 0, 0.7);
+      --border-default: rgba(255,255,255,0.06);
+      --border-accent: rgba(0,229,255,0.25);
 
-      /* General App Styling */
-      --app-border-radius: 20px 50px 20px 50px;
-      --card-border-radius: 15px;
+      --glow-cyan: 0 0 20px rgba(0,229,255,0.15);
+      --glow-emerald: 0 0 20px rgba(0,230,118,0.15);
+
+      /* ---- Spacing ---- */
+      --space-xs: 4px;
+      --space-sm: 8px;
+      --space-md: 16px;
+      --space-lg: 24px;
+      --space-xl: 32px;
+
+      /* ---- Radius ---- */
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-full: 100px;
+
+      /* ---- Typography ---- */
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
-    /* Global Resets and Base Styles */
-    * {
+    /* ---- Reset ---- */
+    *, *::before, *::after {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      font-size: 16px;
+      scroll-behavior: smooth;
     }
 
     body {
-      background: linear-gradient(
-        45deg,
-        var(--sys-color-background),
-        #0a0a2e, /* Keep a dark blue hint */
-        #121212
-      );
-      color: var(--sys-color-on-background);
+      font-family: var(--font);
+      background: var(--bg-primary);
+      color: var(--text-primary);
       min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden; /* Prevent body scroll */
+      min-height: 100dvh;
+      overflow: hidden;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
 
-    /* 3D Canvas Background */
-    #canvas3d {
-      position: fixed;
-      top: 0;
-      left: 0;
+    /* ================================================================
+       APP SHELL
+       ================================================================ */
+    .app {
+      display: flex;
+      flex-direction: column;
       width: 100%;
-      height: 100%;
-      z-index: -1; /* Behind all content */
-      opacity: 0.3; /* Subtle background */
-    }
-
-    /* Main Application Container */
-    .app-container {
-      position: relative;
-      width: 100vw;
       height: 100vh;
-      max-width: 450px; /* Adjusted for a typical mobile portrait ratio (approx 9/16 for height on wider screens) */
-      max-height: 800px; /* Adjusted to keep reasonable size */
-      aspect-ratio: 9 / 16; /* Maintain aspect ratio */
-      overflow: hidden; /* Hide anything outside its bounds */
-      background-color: var(--sys-color-background);
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: center;
-      padding: 20px;
-      padding-bottom: 100px; /* Adjusted space for the fixed bottom nav */
-      border-radius: var(--app-border-radius); /* Unique border radius */
-      box-shadow: 0 0 25px var(--sys-shadow-accent-medium); /* Stronger accent glow */
-      z-index: 10; /* Above 3D canvas */
-    }
-
-    /* Title Pill Styling */
-    .title-pill {
-      background-color: var(--sys-color-surface);
-      border: 1px solid var(--sys-color-outline-variant);
-      border-radius: 30px;
-      padding: 10px 25px;
-      margin-bottom: 2rem;
-      display: inline-block;
-      text-align: center;
-      box-shadow: 0 4px 15px var(--sys-shadow-dark);
-      flex-shrink: 0; /* Prevent shrinking */
-      position: relative;
-      z-index: 12; /* Above other elements */
-    }
-
-    h1 {
-      font-size: 1.8rem;
-      font-weight: 200;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: var(--sys-color-primary);
-      margin: 0;
-    }
-
-    /* Content Section Styling */
-    .content-section {
-      flex-grow: 1; /* Allows it to take available vertical space */
-      margin-top: 1.5rem;
-      padding: 20px;
-      border: 1px solid var(--sys-color-outline);
-      border-radius: var(--app-border-radius);
-      background-color: var(--sys-color-surface-variant);
-      backdrop-filter: blur(15px); /* Frosted glass effect */
-      -webkit-backdrop-filter: blur(15px);
-      transition: transform 0.3s ease, opacity 0.3s ease;
-      position: relative;
-      overflow-y: auto; /* Enable vertical scrolling */
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      text-align: center;
-      width: 100%; /* Full width within container */
-      box-shadow: 0 0 25px 5px var(--sys-shadow-accent-medium);
-      z-index: 11; /* Above floating elements */
-
-      /* Hide scrollbar for clean look */
-      -ms-overflow-style: none;  /* IE and Edge */
-      scrollbar-width: none;  /* Firefox */
-    }
-
-    /* Hide Webkit scrollbar */
-    .content-section::-webkit-scrollbar {
-      display: none;
-    }
-
-    .content-section h2 {
-      color: var(--sys-color-primary);
-      margin-bottom: 1rem;
-      font-size: 1.8rem;
-      font-weight: 300;
-    }
-
-    .content-section p {
-      font-size: 1rem;
-      line-height: 1.6;
-      color: var(--sys-color-on-surface);
-      margin-bottom: 0.8rem;
-    }
-
-    .content-section ul {
-      list-style: none;
-      padding: 0;
-      margin-bottom: 1rem;
-      color: var(--sys-color-on-surface);
-    }
-
-    .content-section ul li {
-      margin-bottom: 0.5rem;
-      padding-left: 1.5rem;
-      position: relative;
-    }
-
-    .content-section ul li::before {
-      content: '›'; /* A simple arrow or bullet */
-      color: var(--sys-color-primary);
-      position: absolute;
-      left: 0;
-      font-weight: bold;
-    }
-
-    /* Floating Background Elements */
-    .floating-element {
-      position: absolute;
-      background: rgba(0, 255, 255, 0.08);
-      border: 1px solid rgba(0, 255, 255, 0.3);
-      border-radius: 50%;
-      pointer-events: none; /* Allows clicks to pass through */
-      z-index: 1; /* Behind content, above 3D canvas */
-    }
-
-    /* Main Action Button */
-    .main-action-btn {
-      background: var(--sys-color-surface);
-      color: var(--sys-color-primary);
-      border: 1px solid var(--sys-color-outline-variant);
-      padding: 15px 30px;
-      text-decoration: none;
-      text-align: center;
-      border-radius: 25px; /* Slightly more rounded */
-      transition: all 0.3s ease;
-      font-weight: 600;
-      font-size: 1.15rem;
-      display: inline-block;
-      margin-top: 1.5rem; /* Ensure consistent margin */
-      width: 90%; /* Use percentage width */
-      max-width: 300px; /* Max width to prevent over-stretching */
+      height: 100dvh;
+      max-width: 430px;
+      margin: 0 auto;
       position: relative;
       overflow: hidden;
-      box-shadow: 0 4px 15px var(--sys-shadow-dark); /* Stronger shadow */
-      z-index: 12;
-      cursor: pointer; /* Add cursor pointer for consistency */
     }
 
-    .main-action-btn:hover {
-      background: var(--sys-color-primary-container);
-      border-color: var(--sys-color-primary);
-      box-shadow: 0 0 20px var(--sys-shadow-accent-light); /* More intense hover glow */
-      transform: translateY(-3px); /* More pronounced lift */
-    }
-
-    /* Glowing Border Animation for Button */
-    .main-action-btn::before {
+    /* ---- Ambient glow ---- */
+    .app::before {
       content: '';
       position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: conic-gradient(
-        var(--sys-color-primary) 0deg,
-        transparent 90deg,
-        transparent 180deg,
-        var(--sys-color-primary) 270deg,
-        transparent 360deg
-      );
-      animation: borderRotate 3s linear infinite;
-      z-index: -1;
-      opacity: 0.2;
-    }
-
-    @keyframes borderRotate {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    /* Utility Class for Hiding Elements */
-    .hidden {
-      display: none !important;
-    }
-
-    /* Bottom Navigation Bar */
-    .bottom-nav-bar {
-      position: fixed; /* Changed to fixed positioning */
-      bottom: 20px; /* Adjusted bottom value */
+      top: -120px;
       left: 50%;
       transform: translateX(-50%);
-      background-color: var(--sys-color-surface-variant);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      padding: 10px;
-      border-radius: 35px;
-      box-shadow: 0 8px 25px var(--sys-shadow-dark);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      z-index: 1000; /* Always on top */
-      border: 1px solid var(--sys-color-outline);
-      width: calc(100% - 40px); /* Leave some margin on sides */
-      justify-content: center;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,229,255,0.12) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+      animation: ambientPulse 6s ease-in-out infinite;
     }
 
-    .nav-options-wrapper {
-      display: flex;
-      gap: 5px;
-      flex-grow: 1;
-      justify-content: center;
-      overflow-x: auto; /* Enable horizontal scrolling for many options */
-      white-space: nowrap; /* Prevent wrapping */
-      -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    @keyframes ambientPulse {
+      0%, 100% { opacity: 0.6; transform: translateX(-50%) scale(1); }
+      50% { opacity: 1; transform: translateX(-50%) scale(1.15); }
+    }
 
-      /* Hide scrollbar for clean look */
+    /* ================================================================
+       TOP BAR
+       ================================================================ */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-md) var(--space-lg);
+      padding-top: calc(var(--space-lg) + env(safe-area-inset-top, 0px));
+      position: relative;
+      z-index: 10;
+      flex-shrink: 0;
+    }
+
+    .topbar-brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .topbar-logo {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-emerald));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 14px;
+      color: var(--bg-primary);
+      box-shadow: var(--glow-cyan);
+    }
+
+    .topbar-title {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-emerald));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .topbar-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--accent-emerald);
+      font-weight: 500;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent-emerald);
+      animation: statusBlink 2s ease-in-out infinite;
+    }
+
+    @keyframes statusBlink {
+      0%, 100% { opacity: 1; box-shadow: 0 0 6px var(--accent-emerald); }
+      50% { opacity: 0.4; box-shadow: none; }
+    }
+
+    /* ================================================================
+       PAGE CONTAINER
+       ================================================================ */
+    .page-container {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 0 var(--space-lg);
+      padding-bottom: var(--space-xl);
+      position: relative;
+      z-index: 5;
+      scroll-behavior: smooth;
+
       -ms-overflow-style: none;
       scrollbar-width: none;
     }
+    .page-container::-webkit-scrollbar { display: none; }
 
-    /* Hide Webkit scrollbar for nav options */
-    .nav-options-wrapper::-webkit-scrollbar {
-        display: none;
+    .page {
+      display: none;
+      animation: pageIn 0.35s ease-out forwards;
+    }
+    .page.active { display: block; }
+
+    @keyframes pageIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    .nav-control-btn, .nav-toggle-btn {
-      background-color: transparent;
-      color: var(--sys-color-primary);
-      padding: 10px 20px;
-      border: none; /* No default border */
-      border-radius: 0; /* Reset radius */
-      cursor: pointer;
+    /* ================================================================
+       SECTION TITLES
+       ================================================================ */
+    .section-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: var(--space-lg);
+      color: var(--text-primary);
+    }
+
+    .section-subtitle {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--text-secondary);
+      margin-top: -12px;
+      margin-bottom: var(--space-lg);
+    }
+
+    /* ================================================================
+       DASHBOARD — Stats Cards
+       ================================================================ */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-md);
+      margin-bottom: var(--space-lg);
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 3px;
+      border-radius: var(--radius-md) var(--radius-md) 0 0;
+    }
+
+    .stat-card:nth-child(1)::after { background: var(--accent-cyan); }
+    .stat-card:nth-child(2)::after { background: var(--accent-emerald); }
+    .stat-card:nth-child(3)::after { background: var(--accent-amber); }
+    .stat-card:nth-child(4)::after { background: var(--accent-purple); }
+
+    .stat-card:active {
+      transform: scale(0.97);
+    }
+
+    .stat-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      margin-bottom: var(--space-sm);
+    }
+
+    .stat-card:nth-child(1) .stat-icon { background: rgba(0,229,255,0.12); color: var(--accent-cyan); }
+    .stat-card:nth-child(2) .stat-icon { background: rgba(0,230,118,0.12); color: var(--accent-emerald); }
+    .stat-card:nth-child(3) .stat-icon { background: rgba(255,171,64,0.12); color: var(--accent-amber); }
+    .stat-card:nth-child(4) .stat-icon { background: rgba(179,136,255,0.12); color: var(--accent-purple); }
+
+    .stat-value {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 2px;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
       font-weight: 500;
-      font-size: 0.95rem;
-      transition: all 0.3s ease;
-      outline: none; /* Remove focus outline */
-      min-width: 80px;
-      text-align: center;
-      flex-shrink: 0; /* Prevent shrinking */
     }
 
-    .nav-toggle-btn {
-        min-width: 40px;
-        padding: 10px 12px;
-        font-weight: bold;
-        border: 1px solid var(--sys-color-outline-variant);
-        border-radius: 50%; /* Circular buttons */
-    }
-
-    .nav-control-btn:hover, .nav-toggle-btn:hover:not(:disabled) {
-      background-color: rgba(0, 255, 255, 0.1);
-      border-color: transparent;
-      transform: scale(1.05); /* Slight hover scale effect */
-    }
-
-    .nav-toggle-btn:hover:not(:disabled) {
-        border-color: var(--sys-color-primary);
-    }
-
-    .nav-toggle-btn:disabled {
-        opacity: 0.3;
-        cursor: not-allowed;
-        border-color: rgba(0, 255, 255, 0.1);
-        background-color: transparent;
-        transform: none;
-    }
-
-    /* Active Navigation Button State */
-    .nav-control-btn.active {
-      background-color: var(--sys-color-primary-container);
-      color: var(--sys-color-on-primary-container);
-      border: none;
+    .stat-trend {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 10px;
       font-weight: 600;
-      box-shadow: 0 2px 10px var(--sys-shadow-accent-medium);
-      transform: translateY(-2px);
-      border-bottom: 2px solid var(--sys-color-primary); /* Underline effect */
-      padding-bottom: 8px; /* Adjust padding for underline */
+      margin-top: 6px;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
     }
 
-    /* Client Accounts Specific Styles (Integrated from client_balance.html) */
-    .client-view-container {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-        flex-grow: 1;
-        overflow: hidden; /* Prevent container from scrolling, internal elements will scroll */
-        width: 100%; /* Ensure it takes full width of its parent .content-section */
-        height: 100%; /* Ensure it takes full height of its parent .content-section */
+    .stat-trend.up {
+      background: rgba(0,230,118,0.12);
+      color: var(--accent-emerald);
     }
 
-    .client-view {
-        display: none;
-        padding: 0;
-        min-height: 0;
-        flex-direction: column; /* Default to column for detail view */
-        gap: 15px; /* Added gap for consistent spacing */
-        flex-grow: 1; /* Only the active view grows */
-        overflow: hidden; /* Prevent active view from scrolling if content overflows, let inner element handle it */
-    }
-    .client-view.active {
-        display: flex;
+    .stat-trend.down {
+      background: rgba(255,82,82,0.12);
+      color: var(--accent-rose);
     }
 
-    /* Client List View */
-    #clientListView .search-container {
-        margin-bottom: 5px;
-        position: relative;
-        flex-shrink: 0;
+    /* ================================================================
+       REVENUE CHART PLACEHOLDER
+       ================================================================ */
+    .chart-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      margin-bottom: var(--space-lg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
     }
 
-    #clientListView .search-container input[type="text"] {
-        width: 100%;
-        padding: 12px 15px 12px 40px;
-        border: 1px solid var(--sys-color-outline-variant);
-        border-radius: var(--card-border-radius);
-        font-size: 1rem;
-        background-color: var(--sys-color-surface);
-        color: var(--sys-color-on-surface);
-        box-shadow: inset 0 0 5px rgba(0, 255, 255, 0.1);
-        transition: all 0.3s ease;
-    }
-    #clientListView .search-container input[type="text"]::placeholder {
-        color: var(--sys-color-on-surface-variant);
-        opacity: 0.7;
-    }
-    #clientListView .search-container input[type="text"]:focus {
-        outline: none;
-        border-color: var(--sys-color-primary);
-        box-shadow: 0 0 10px var(--sys-shadow-accent-light), inset 0 0 5px rgba(0, 255, 255, 0.2);
-    }
-    #clientListView .search-container .search-icon {
-        position: absolute;
-        left: 12px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--sys-color-outline-variant);
-        font-size: 1.2rem;
+    .chart-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-md);
     }
 
-    .client-name-list {
-        list-style: none;
-        padding: 0;
-        flex-grow: 1; /* Allows the list to take up available space in the flex container */
-        overflow-y: auto; /* This is where the scrollbar for the list will appear */
-        -ms-overflow-style: none; /* IE and Edge */
-        scrollbar-width: none; /* Firefox */
-        padding-right: 5px; /* for scrollbar space if needed */
-    }
-    .client-name-list::-webkit-scrollbar {
-        display: none; /* Chrome, Safari, Opera */
+    .chart-title {
+      font-size: 14px;
+      font-weight: 600;
     }
 
-    .client-name-item {
-        background-color: var(--sys-color-surface);
-        border: 1px solid var(--sys-color-outline);
-        border-radius: var(--card-border-radius);
-        padding: 15px 20px;
-        margin-bottom: 10px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        font-size: 1.1rem;
-        color: var(--sys-color-on-surface);
-        box-shadow: 0 2px 8px var(--sys-shadow-dark);
+    .chart-period {
+      font-size: 11px;
+      color: var(--text-secondary);
+      background: rgba(255,255,255,0.04);
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border-default);
     }
 
-    .client-name-item:hover {
-        background-color: rgba(30, 30, 30, 0.9);
-        border-color: var(--sys-color-primary);
-        transform: translateY(-2px);
-        box-shadow: 0 4px 15px var(--sys-shadow-accent-light);
+    .chart-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+      height: 120px;
+      padding-top: var(--space-sm);
     }
 
-    /* Client Detail View */
-    #clientDetailView {
-        background-color: var(--sys-color-surface);
-        border: 1px solid var(--sys-color-outline-variant);
-        border-radius: var(--card-border-radius);
-        padding: 25px;
-        box-shadow: 0 0 20px var(--sys-shadow-accent-medium);
-        text-align: center;
-        flex-direction: column;
-        justify-content: flex-start; /* Align items to the top for details */
-        align-items: center;
-        min-height: 150px;
-        overflow-y: auto; /* Allow detail view to scroll if content is too long */
-        -ms-overflow-style: none;
-        scrollbar-width: none;
-        gap: 15px; /* Increased gap for better spacing */
-    }
-    #clientDetailView::-webkit-scrollbar {
-        display: none;
+    .chart-bar-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      height: 100%;
     }
 
-    /* Restored h2 style for client name in detail view */
-    #clientDetailView h2 {
-        color: var(--sys-color-primary);
-        font-size: 2rem;
-        margin-bottom: 1rem;
-        word-wrap: break-word;
-        text-shadow: 0 0 10px var(--sys-shadow-accent-light);
-        font-weight: 400;
+    .chart-bar {
+      width: 100%;
+      border-radius: 6px 6px 3px 3px;
+      background: linear-gradient(180deg, var(--accent-cyan), rgba(0,229,255,0.3));
+      margin-top: auto;
+      transition: height 1s cubic-bezier(0.22, 1, 0.36, 1);
+      position: relative;
     }
 
-    /* Styles for individual balance entries */
-    .balance-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: baseline;
-        width: 100%;
-        padding: 0.5rem 0;
-        border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
-        font-size: 1.1rem;
-        color: var(--sys-color-on-surface);
-    }
-    .balance-item:last-of-type {
-        border-bottom: none; /* No border for the last item */
-        margin-bottom: 1rem; /* Space below the last balance item */
+    .chart-bar.accent {
+      background: linear-gradient(180deg, var(--accent-emerald), rgba(0,230,118,0.3));
     }
 
-    .balance-label {
-        font-weight: normal;
-        color: var(--sys-color-on-surface-variant);
-        margin-right: 1rem; /* Space between label and amount */
-        text-align: left;
-        flex-grow: 1; /* Allow label to take available space */
+    .chart-bar-label {
+      font-size: 9px;
+      color: var(--text-muted);
+      font-weight: 500;
     }
 
-    .balance-amount {
-        font-weight: 600;
-        font-size: 1.25rem; /* Slightly larger for emphasis */
-        text-align: right;
-        flex-shrink: 0; /* Prevent amount from shrinking */
+    /* ================================================================
+       MACHINE LIST (Dashboard)
+       ================================================================ */
+    .machine-list-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-md);
     }
 
-    .debt-positive {
-        color: #ff6347; /* Tomato red for positive debt (you owe) */
-        text-shadow: 0 0 5px rgba(255, 99, 71, 0.5);
+    .machine-list-title {
+      font-size: 14px;
+      font-weight: 600;
     }
 
-    .debt-negative {
-        color: #32cd32; /* Lime green for negative debt (they owe you) */
-        text-shadow: 0 0 5px rgba(50, 205, 50, 0.5);
+    .machine-view-all {
+      font-size: 12px;
+      color: var(--accent-cyan);
+      text-decoration: none;
+      font-weight: 500;
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-family: var(--font);
     }
 
-    .last-updated-info {
-        margin-top: 0.5rem;
-        color: var(--sys-color-on-surface-variant);
-        font-size: 0.95rem;
+    .machine-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      margin-bottom: var(--space-sm);
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      transition: transform 0.2s ease, border-color 0.2s ease;
+      cursor: pointer;
     }
 
-    .back-button {
-        background: transparent; /* Changed to transparent */
-        color: var(--sys-color-primary);
-        border: 1px solid var(--sys-color-outline); /* Softer border */
-        padding: 12px 25px; /* Slightly less padding */
-        text-decoration: none;
-        text-align: center;
-        border-radius: 20px; /* Slightly less rounded */
-        transition: all 0.3s ease;
-        font-weight: 500; /* Slightly lighter font weight */
-        font-size: 1rem; /* Slightly smaller font size */
-        display: inline-block;
-        margin-top: auto; /* Push the button to the bottom */
-        width: 70%; /* Use percentage width */
-        max-width: 200px; /* Max width to prevent over-stretching */
-        position: relative;
-        overflow: hidden;
-        box-shadow: 0 2px 5px var(--sys-shadow-dark); /* Less prominent shadow */
-        cursor: pointer;
-        flex-shrink: 0;
+    .machine-card:active {
+      transform: scale(0.98);
+      border-color: var(--border-accent);
     }
 
-    .back-button:hover {
-        background: rgba(0, 255, 255, 0.1); /* Subtle background on hover */
-        border-color: var(--sys-color-primary);
-        box-shadow: 0 0 10px var(--sys-shadow-accent-light); /* Softer hover glow */
-        transform: translateY(-1px); /* Less pronounced lift */
+    .machine-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
     }
 
-    /* Removed ::before for back-button to differentiate it from main-action-btn */
-    .back-button::before {
-        content: none;
+    .machine-avatar.online { background: rgba(0,230,118,0.12); }
+    .machine-avatar.warning { background: rgba(255,171,64,0.12); }
+    .machine-avatar.offline { background: rgba(255,82,82,0.12); }
+
+    .machine-info {
+      flex: 1;
+      min-width: 0;
     }
 
-    .no-clients-message {
-        text-align: center;
-        color: var(--sys-color-on-surface-variant);
-        padding: 20px;
-        background-color: var(--sys-color-surface);
-        border: 1px solid var(--sys-color-outline);
-        border-radius: var(--card-border-radius);
-        box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
-        margin-top: 20px;
-        flex-grow: 1;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+    .machine-name {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .loader {
-        display: none;
-        position: fixed;
-        left: 50%;
-        top: 50%;
-        width: 50px;
-        height: 50px;
-        border: 5px solid var(--sys-color-surface);
-        border-top: 5px solid var(--sys-color-primary);
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        transform: translate(-50%, -50%);
-        z-index: 1000;
+    .machine-location {
+      font-size: 11px;
+      color: var(--text-secondary);
     }
 
-    @keyframes spin {
-        0% { transform: translate(-50%, -50%) rotate(0deg); }
-        100% { transform: translate(-50%, -50%) rotate(360deg); }
+    .machine-status-badge {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      flex-shrink: 0;
     }
 
-    /* New styles for LLM integration */
-    .advice-output, .faq-output, .project-idea-output, .event-description-output {
-        background-color: rgba(0, 255, 255, 0.05);
-        border: 1px solid rgba(0, 255, 255, 0.2);
-        border-radius: 10px;
-        padding: 15px;
-        margin-top: 1rem;
-        color: var(--sys-color-on-surface);
-        font-size: 0.95rem;
-        line-height: 1.5;
-        text-align: left;
-        width: 100%;
-        box-shadow: inset 0 0 5px rgba(0, 255, 255, 0.1);
+    .machine-status-badge.online {
+      background: rgba(0,230,118,0.12);
+      color: var(--accent-emerald);
     }
 
-    .faq-input, .project-input, .event-input {
-        width: 100%;
-        padding: 12px 15px;
-        border: 1px solid var(--sys-color-outline-variant);
-        border-radius: var(--card-border-radius);
-        font-size: 1rem;
-        background-color: var(--sys-color-surface);
-        color: var(--sys-color-on-surface);
-        box-shadow: inset 0 0 5px rgba(0, 255, 255, 0.1);
-        transition: all 0.3s ease;
-        margin-bottom: 1rem;
-    }
-    .faq-input::placeholder, .project-input::placeholder, .event-input::placeholder {
-        color: var(--sys-color-on-surface-variant);
-        opacity: 0.7;
-    }
-    .faq-input:focus, .project-input:focus, .event-input:focus {
-        outline: none;
-        border-color: var(--sys-color-primary);
-        box-shadow: 0 0 10px var(--sys-shadow-accent-light), inset 0 0 5px rgba(0, 255, 255, 0.2);
+    .machine-status-badge.warning {
+      background: rgba(255,171,64,0.12);
+      color: var(--accent-amber);
     }
 
-    /* Responsive Adjustments */
-    @media (max-width: 768px) {
-        .app-container {
-            padding: 15px;
-            padding-bottom: 90px; /* Adjusted for smaller nav bar */
-            border-radius: 25px 10px 25px 10px;
-        }
+    .machine-status-badge.offline {
+      background: rgba(255,82,82,0.12);
+      color: var(--accent-rose);
+    }
 
-        .title-pill {
-            margin-bottom: 1.5rem;
-            padding: 8px 20px;
-        }
+    /* ================================================================
+       INVENTORY PAGE
+       ================================================================ */
+    .inventory-tabs {
+      display: flex;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-lg);
+      overflow-x: auto;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+      padding-bottom: 2px;
+    }
+    .inventory-tabs::-webkit-scrollbar { display: none; }
 
-        h1 {
-            font-size: 1.6rem;
-        }
+    .inv-tab {
+      padding: 8px 18px;
+      border-radius: var(--radius-full);
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid var(--border-default);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      white-space: nowrap;
+      font-family: var(--font);
+      transition: all 0.2s ease;
+    }
 
-        .content-section {
-            padding: 15px;
-            margin-top: 1rem;
-            border-radius: 15px 40px 15px 40px;
-        }
+    .inv-tab.active {
+      background: rgba(0,229,255,0.12);
+      color: var(--accent-cyan);
+      border-color: var(--accent-cyan);
+    }
 
-        .content-section h2 {
-            font-size: 1.6rem;
-            margin-bottom: 0.8rem;
-        }
+    .inv-tab:active {
+      transform: scale(0.95);
+    }
 
-        .content-section p, .content-section ul li {
-            font-size: 0.95rem;
-        }
+    .inventory-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      margin-bottom: var(--space-sm);
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      transition: all 0.2s ease;
+    }
 
-        .main-action-btn {
-            padding: 12px 25px;
-            font-size: 1rem;
-            width: 90%; /* Responsive width */
-            max-width: 280px; /* Adjusted max-width for smaller screens */
-        }
+    .inventory-item:active {
+      transform: scale(0.98);
+    }
 
-        .bottom-nav-bar {
-            bottom: 20px;
-            padding: 8px;
-            border-radius: 30px;
-            width: calc(100% - 30px);
-        }
+    .inv-item-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
 
-        .nav-control-btn, .nav-toggle-btn {
-            padding: 8px 15px;
-            font-size: 0.85rem;
-            min-width: 70px;
-        }
+    .inv-item-icon.drinks { background: rgba(0,229,255,0.1); }
+    .inv-item-icon.shisha { background: rgba(179,136,255,0.1); }
+    .inv-item-icon.accessories { background: rgba(255,171,64,0.1); }
 
-        .nav-toggle-btn {
-            min-width: 35px;
-            padding: 8px 10px;
-        }
+    .inv-item-details {
+      flex: 1;
+      min-width: 0;
+    }
 
-        /* Client Accounts specific responsive adjustments */
-        #clientListView .search-container input[type="text"] {
-            font-size: 0.95rem;
-            padding: 10px 15px 10px 35px;
-        }
+    .inv-item-name {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
 
-        #clientListView .search-container .search-icon {
-            left: 10px;
-            font-size: 1.1rem;
-        }
+    .inv-item-meta {
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
 
-        .client-name-item {
-            font-size: 1rem;
-            padding: 12px 15px;
-            margin-bottom: 8px;
-        }
+    .inv-item-right {
+      text-align: right;
+      flex-shrink: 0;
+    }
 
-        #clientDetailView {
-            padding: 20px;
-        }
+    .inv-item-price {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--accent-cyan);
+    }
 
-        #clientDetailView h2 {
-            font-size: 1.8rem;
-            margin-bottom: 0.6rem;
-        }
+    .inv-item-stock {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
 
-        .balance-item {
-            font-size: 1rem;
-            padding: 0.3rem 0;
-        }
-        .balance-amount {
-            font-size: 1.1rem;
-        }
-        .last-updated-info {
-            font-size: 0.8rem;
-        }
+    .inv-stock-bar {
+      width: 60px;
+      height: 4px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 2px;
+      margin-top: 4px;
+      margin-left: auto;
+      overflow: hidden;
+    }
 
-        .back-button {
-            padding: 10px 20px;
-            font-size: 1rem;
-            width: 70%; /* Responsive width */
-            max-width: 180px; /* Adjusted max-width for smaller screens */
-        }
+    .inv-stock-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 1s cubic-bezier(0.22,1,0.36,1);
+    }
+
+    .inv-stock-fill.high { background: var(--accent-emerald); }
+    .inv-stock-fill.medium { background: var(--accent-amber); }
+    .inv-stock-fill.low { background: var(--accent-rose); }
+
+    /* ================================================================
+       TOKENS PAGE
+       ================================================================ */
+    .token-hero {
+      background: linear-gradient(135deg, rgba(0,229,255,0.08), rgba(0,230,118,0.06));
+      border: 1px solid var(--border-accent);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xl);
+      text-align: center;
+      margin-bottom: var(--space-lg);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .token-hero::before {
+      content: '';
+      position: absolute;
+      top: -60px;
+      right: -60px;
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,229,255,0.1), transparent 70%);
+      pointer-events: none;
+    }
+
+    .token-symbol {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-emerald));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--bg-primary);
+      margin: 0 auto var(--space-md);
+      box-shadow: 0 0 30px rgba(0,229,255,0.25);
+    }
+
+    .token-balance-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: var(--space-xs);
+    }
+
+    .token-balance-value {
+      font-size: 36px;
+      font-weight: 800;
+      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-emerald));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.1;
+      margin-bottom: var(--space-xs);
+    }
+
+    .token-balance-usd {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .token-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-lg);
+    }
+
+    .token-action-btn {
+      padding: 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-default);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-sm);
+    }
+
+    .token-action-btn:active {
+      transform: scale(0.96);
+      border-color: var(--accent-cyan);
+    }
+
+    .token-action-btn .btn-icon {
+      font-size: 16px;
+    }
+
+    .token-tx-list {
+      margin-top: var(--space-md);
+    }
+
+    .token-tx-header {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: var(--space-md);
+    }
+
+    .token-tx-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      padding: var(--space-md) 0;
+      border-bottom: 1px solid var(--border-default);
+    }
+
+    .token-tx-item:last-child { border-bottom: none; }
+
+    .tx-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .tx-icon.earned { background: rgba(0,230,118,0.12); }
+    .tx-icon.spent { background: rgba(255,82,82,0.12); }
+    .tx-icon.transfer { background: rgba(179,136,255,0.12); }
+
+    .tx-details { flex: 1; min-width: 0; }
+
+    .tx-desc {
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 2px;
+    }
+
+    .tx-time {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .tx-amount {
+      font-size: 14px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .tx-amount.positive { color: var(--accent-emerald); }
+    .tx-amount.negative { color: var(--accent-rose); }
+
+    /* ================================================================
+       SALES PAGE
+       ================================================================ */
+    .sales-summary {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-lg);
+    }
+
+    .sales-mini-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      padding: var(--space-md) var(--space-sm);
+      text-align: center;
+    }
+
+    .sales-mini-value {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .sales-mini-label {
+      font-size: 10px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .sales-feed-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: var(--space-md);
+    }
+
+    .sale-feed-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      margin-bottom: var(--space-sm);
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+    }
+
+    .sale-feed-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(0,229,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .sale-feed-info { flex: 1; min-width: 0; }
+
+    .sale-feed-product {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .sale-feed-meta {
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    .sale-feed-amount {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--accent-emerald);
+      flex-shrink: 0;
+    }
+
+    /* ================================================================
+       SETTINGS PAGE
+       ================================================================ */
+    .settings-group {
+      margin-bottom: var(--space-lg);
+    }
+
+    .settings-group-title {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: var(--space-sm);
+      padding-left: var(--space-xs);
+    }
+
+    .settings-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+
+    .settings-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      padding: var(--space-md);
+      border-bottom: 1px solid var(--border-default);
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .settings-item:last-child { border-bottom: none; }
+
+    .settings-item:active {
+      background: rgba(255,255,255,0.03);
+    }
+
+    .settings-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      background: rgba(0,229,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .settings-label {
+      flex: 1;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .settings-arrow {
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .settings-version {
+      text-align: center;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: var(--space-lg);
+      padding-bottom: var(--space-lg);
+    }
+
+    /* ================================================================
+       BOTTOM NAVIGATION
+       ================================================================ */
+    .bottom-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: var(--space-sm) 0;
+      padding-bottom: calc(var(--space-sm) + env(safe-area-inset-bottom, 0px));
+      background: rgba(10, 14, 26, 0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid var(--border-default);
+      flex-shrink: 0;
+      z-index: 100;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 0;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font);
+      font-size: 10px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: color 0.2s ease;
+      position: relative;
+      min-width: 56px;
+    }
+
+    .nav-item.active {
+      color: var(--accent-cyan);
+    }
+
+    .nav-item.active::before {
+      content: '';
+      position: absolute;
+      top: -9px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 24px;
+      height: 3px;
+      border-radius: 0 0 3px 3px;
+      background: var(--accent-cyan);
+    }
+
+    .nav-icon {
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .nav-label {
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* ================================================================
+       UTILITIES & ANIMATIONS
+       ================================================================ */
+    .text-cyan { color: var(--accent-cyan); }
+    .text-emerald { color: var(--accent-emerald); }
+    .text-amber { color: var(--accent-amber); }
+    .text-rose { color: var(--accent-rose); }
+
+    .animate-count {
+      animation: countUp 0.8s ease-out forwards;
+    }
+
+    @keyframes countUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Stagger children */
+    .stagger > *:nth-child(1) { animation-delay: 0.05s; }
+    .stagger > *:nth-child(2) { animation-delay: 0.1s; }
+    .stagger > *:nth-child(3) { animation-delay: 0.15s; }
+    .stagger > *:nth-child(4) { animation-delay: 0.2s; }
+    .stagger > *:nth-child(5) { animation-delay: 0.25s; }
+    .stagger > *:nth-child(6) { animation-delay: 0.3s; }
+    .stagger > *:nth-child(7) { animation-delay: 0.35s; }
+    .stagger > *:nth-child(8) { animation-delay: 0.4s; }
+
+    /* ================================================================
+       EMPTY STATE
+       ================================================================ */
+    .empty-state {
+      text-align: center;
+      padding: var(--space-xl) var(--space-lg);
+    }
+
+    .empty-state-icon {
+      font-size: 48px;
+      margin-bottom: var(--space-md);
+      opacity: 0.4;
+    }
+
+    .empty-state-text {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.6;
     }
   </style>
 </head>
 <body>
-  <canvas id="canvas3d"></canvas>
-  <div class="loader" id="loader" role="status" aria-label="Loading content"></div>
 
-  <div class="app-container">
-    <div class="title-pill">
-      <h1 id="mainAppTitle">PMD742OMNI HUB</h1>
+<div class="app">
+
+  <!-- ======== TOP BAR ======== -->
+  <header class="topbar">
+    <div class="topbar-brand">
+      <div class="topbar-logo">DS</div>
+      <span class="topbar-title">Dubicx Switcx</span>
     </div>
-
-    <div id="about-content" class="content-section">
-      <h2>About PMD742OMNI HUB</h2>
-      <p>Welcome to your personalized OMNI HUB. This hub is designed to centralize your important links and information efficiently.</p>
-      <p>Use the navigation below to switch between different sections and explore various aspects of your digital presence.</p>
-      <p>Our goal is to provide a seamless and intuitive experience, bringing all your essential resources into one accessible location. Whether it's managing finances, connecting socially, or exploring creative works, the OMNI HUB has you covered.</p>
-      <p>We continuously strive to improve and expand the functionality of this hub. Your feedback is invaluable in shaping its future development. Thank you for being a part of the PMD742 community.</p>
-      <p>This is some more content to make the section scrollable. You can add as much text or elements as you need here.</p>
-      <p>Scroll down to see more!</p>
-      <p>More detailed information about the hub's mission and vision will be added here soon. Stay tuned for exciting updates!</p>
+    <div class="topbar-status">
+      <span class="status-dot"></span>
+      <span>Live</span>
     </div>
+  </header>
 
-    <div id="financial-content" class="content-section hidden">
-        <div class="client-view-container">
-            <section id="clientListView" class="client-view active">
-                <div class="search-container">
-                    <span class="search-icon" aria-hidden="true">&#128269;</span>
-                    <input type="text" id="searchInput" placeholder="Search by account name..." aria-label="Search client accounts">
-                </div>
-                <ul class="client-name-list" id="clientNameListElement">
-                </ul>
-                <div class="no-clients-message" id="noClientsInListMessage" role="status" aria-live="polite" style="display: none;">
-                    No accounts found.
-                </div>
-            </section>
+  <!-- ======== PAGE CONTAINER ======== -->
+  <main class="page-container">
 
-            <section id="clientDetailView" class="client-view">
-                <h2 id="detailClientName"></h2>
-                <div id="clientBalancesContainer" style="width: 100%; text-align: center; margin-top: 0.5rem; padding: 0 10%;">
-                </div>
-                <p class="last-updated-info"><strong>Last Updated:</strong> <span id="detailClientLastUpdated"></span></p>
-                <button class="back-button" id="backButton">Back to List</button>
-            </section>
+    <!-- ──── DASHBOARD PAGE ──── -->
+    <div id="page-dashboard" class="page active">
+      <h1 class="section-title">Dashboard</h1>
+      <p class="section-subtitle">Real-time overview of your vending ecosystem</p>
+
+      <div class="stats-grid stagger" id="statsGrid">
+        <div class="stat-card animate-count">
+          <div class="stat-icon">💰</div>
+          <div class="stat-value" id="statRevenue">R 0</div>
+          <div class="stat-label">Today's Revenue</div>
+          <span class="stat-trend up">↑ 12.4%</span>
         </div>
-    </div>
-
-    <div id="social-content" class="content-section hidden">
-      <h2>Social Connect</h2>
-      <p>Reach out through your preferred social channels and stay connected with the PMD742 community and support team.</p>
-      <p>We believe in strong community ties and open communication.</p>
-      <p>Connect with us on other platforms coming soon!</p>
-      <a href="https://wa.me/+263786892224" class="main-action-btn" target="_blank" rel="noopener noreferrer">Contact via WhatsApp</a>
-    </div>
-
-    <div id="creative-works-content" class="content-section hidden">
-      <h2>Creative Works</h2>
-      <p>Explore a portfolio of innovative creative projects, designs, and digital art. Witness the blend of technology and imagination.</p>
-      <p>Here are some examples of our work:</p>
-      <ul>
-        <li>Project Alpha: A deep dive into AI-driven design.</li>
-        <li>Design Beta: Revolutionizing user interfaces with haptic feedback.</li>
-        <li>Concept Gamma: Exploring the future of augmented reality in urban planning.</li>
-        <li>Interactive Experience Delta: A new frontier in immersive storytelling.</li>
-      </ul>
-    </div>
-
-    <div id="events-content" class="content-section hidden">
-      <h2>Upcoming Events</h2>
-      <p>Stay updated with the latest events, webinars, workshops, and conferences. Don't miss out on important announcements!</p>
-      <ul>
-        <li>Webinar: Future Tech Innovations (June 10th, 2025)</li>
-        <li>Workshop: AI for Beginners (July 5th, 2025)</li>
-        <li>Conference: Digital Horizons Summit (Aug 20th-22nd, 2025)</li>
-        <li>Community Meetup: Q3 Brainstorm (Sept 15th, 2025)</li>
-      </ul>
-    </div>
-
-    <div id="support-content" class="content-section hidden">
-      <h2>Support Center</h2>
-      <p>Find answers to frequently asked questions, troubleshoot common issues, or get in touch with our dedicated support team for personalized assistance.</p>
-      <p>Our comprehensive FAQ section covers a wide range of topics to help you quickly resolve your queries.</p>
-    </div>
-
-    <nav class="bottom-nav-bar">
-      <button id="nav-prev" class="nav-toggle-btn" aria-label="Previous Section">&lt;</button>
-      <div class="nav-options-wrapper">
+        <div class="stat-card animate-count">
+          <div class="stat-icon">📦</div>
+          <div class="stat-value" id="statItemsSold">0</div>
+          <div class="stat-label">Items Sold</div>
+          <span class="stat-trend up">↑ 8.2%</span>
         </div>
-      <button id="nav-next" class="nav-toggle-btn" aria-label="Next Section">&gt;</button>
-    </nav>
-  </div>
+        <div class="stat-card animate-count">
+          <div class="stat-icon">⚡</div>
+          <div class="stat-value" id="statMachines">0</div>
+          <div class="stat-label">Active Machines</div>
+          <span class="stat-trend up">↑ 2</span>
+        </div>
+        <div class="stat-card animate-count">
+          <div class="stat-icon">🪙</div>
+          <div class="stat-value" id="statTokens">0</div>
+          <div class="stat-label">Tokens Earned</div>
+          <span class="stat-trend up">↑ 5.1%</span>
+        </div>
+      </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+      <!-- Revenue Chart -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <span class="chart-title">Weekly Revenue</span>
+          <span class="chart-period">Apr 1 – Apr 8</span>
+        </div>
+        <div class="chart-bars" id="chartBars">
+          <!-- Bars injected by JS -->
+        </div>
+      </div>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      // --- Three.js Setup and Animation ---
-      const setupThreeJS = () => {
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({
-          canvas: document.querySelector('#canvas3d'),
-          antialias: true,
-          alpha: true
-        });
+      <!-- Machine List -->
+      <div class="machine-list-header">
+        <span class="machine-list-title">Vending Machines</span>
+        <button class="machine-view-all" onclick="switchPage('inventory')">View All</button>
+      </div>
+      <div id="machineList">
+        <!-- Machines injected by JS -->
+      </div>
+    </div>
 
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(window.devicePixelRatio);
+    <!-- ──── INVENTORY PAGE ──── -->
+    <div id="page-inventory" class="page">
+      <h1 class="section-title">Inventory</h1>
+      <p class="section-subtitle">Manage stock across all machines</p>
 
-        // Main Knot
-        const knotGeometry = new THREE.TorusKnotGeometry(10, 3, 256, 32);
-        const knotMaterial = new THREE.MeshStandardMaterial({
-          color: 0x00ffff,
-          roughness: 0.4,
-          metalness: 0.7,
-          transparent: true,
-          opacity: 0.15
-        });
-        const knot = new THREE.Mesh(knotGeometry, knotMaterial);
-        scene.add(knot);
+      <div class="inventory-tabs" id="invTabs">
+        <button class="inv-tab active" data-category="all">All</button>
+        <button class="inv-tab" data-category="drinks">🥤 Drinks</button>
+        <button class="inv-tab" data-category="shisha-flavors">🌿 Flavors</button>
+        <button class="inv-tab" data-category="shisha-foil">🪩 Foil</button>
+        <button class="inv-tab" data-category="shisha-charcoal">🔥 Charcoal</button>
+      </div>
 
-        // Dodecahedron (faceted sphere-like)
-        const dodecaGeometry = new THREE.DodecahedronGeometry(7);
-        const dodecaMaterial = new THREE.MeshStandardMaterial({
-          color: 0x00aaff,
-          wireframe: true,
-          transparent: true,
-          opacity: 0.35,
-          emissive: 0x00aaff,
-          emissiveIntensity: 0.2
-        });
-        const dodeca = new THREE.Mesh(dodecaGeometry, dodecaMaterial);
-        dodeca.position.set(-20, 15, -40);
-        scene.add(dodeca);
+      <div id="inventoryList" class="stagger">
+        <!-- Items injected by JS -->
+      </div>
+    </div>
 
-        // Icosahedron (another complex polyhedron)
-        const icosaGeometry = new THREE.IcosahedronGeometry(10);
-        const icosaMaterial = new THREE.MeshBasicMaterial({
-          color: 0xaa00ff,
-          wireframe: true,
-          transparent: true,
-          opacity: 0.25
-        });
-        const icosa = new THREE.Mesh(icosaGeometry, icosaMaterial);
-        icosa.position.set(25, -12, -30);
-        scene.add(icosa);
+    <!-- ──── TOKENS PAGE ──── -->
+    <div id="page-tokens" class="page">
+      <h1 class="section-title">SwitcxToken</h1>
+      <p class="section-subtitle">Your tokenized economy wallet</p>
 
-        // Cylinder (with a grid-like texture or material)
-        const cylinderGeometry = new THREE.CylinderGeometry(6, 6, 20, 32);
-        const cylinderMaterial = new THREE.MeshStandardMaterial({
-          color: 0x00ffff,
-          roughness: 0.3,
-          metalness: 0.8,
-          transparent: true,
-          opacity: 0.2
-        });
-        const cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
-        cylinder.position.set(0, 30, -50);
-        cylinder.rotation.x = Math.PI / 2;
-        scene.add(cylinder);
+      <div class="token-hero">
+        <div class="token-symbol">S₿</div>
+        <div class="token-balance-label">Total Balance</div>
+        <div class="token-balance-value" id="tokenBalanceValue">0</div>
+        <div class="token-balance-usd" id="tokenBalanceUsd">≈ $0.00 USD</div>
+      </div>
 
-        // Enhanced Particle System
-        const particlesGeometry = new THREE.BufferGeometry();
-        const particlesCount = 5000;
-        const posArray = new Float32Array(particlesCount * 3);
-        const sizes = new Float32Array(particlesCount);
+      <div class="token-actions">
+        <button class="token-action-btn" id="btnEarn">
+          <span class="btn-icon">⬇</span> Earn
+        </button>
+        <button class="token-action-btn" id="btnTransfer">
+          <span class="btn-icon">↗</span> Transfer
+        </button>
+        <button class="token-action-btn" id="btnStake">
+          <span class="btn-icon">🔒</span> Stake
+        </button>
+        <button class="token-action-btn" id="btnRedeem">
+          <span class="btn-icon">🎁</span> Redeem
+        </button>
+      </div>
 
-        for (let i = 0; i < particlesCount; i++) {
-          const x = (Math.random() - 0.5) * 200;
-          const y = (Math.random() - 0.5) * 200;
-          const z = (Math.random() - 0.5) * 200;
-          posArray[i * 3] = x;
-          posArray[i * 3 + 1] = y;
-          posArray[i * 3 + 2] = z;
-          sizes[i] = Math.random() * 1.5 + 0.5;
-        }
+      <div class="token-tx-list">
+        <div class="token-tx-header">Recent Transactions</div>
+        <div id="tokenTxList">
+          <!-- Transactions injected by JS -->
+        </div>
+      </div>
+    </div>
 
-        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-        particlesGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+    <!-- ──── SALES PAGE ──── -->
+    <div id="page-sales" class="page">
+      <h1 class="section-title">Sales</h1>
+      <p class="section-subtitle">Live sales feed & performance</p>
 
-        const customParticlesMaterial = new THREE.ShaderMaterial({
-          uniforms: {
-            color: { value: new THREE.Color(0x00ffff) },
-            pointTexture: { value: new THREE.TextureLoader().load('https://threejs.org/examples/textures/sprites/disc.png') },
-            time: { value: 0.0 }
-          },
-          vertexShader: `
-            attribute float size;
-            uniform float time;
-            uniform vec3 color;
-            varying vec3 vColor;
+      <div class="sales-summary" id="salesSummary">
+        <div class="sales-mini-card">
+          <div class="sales-mini-value text-cyan" id="salesToday">R 0</div>
+          <div class="sales-mini-label">Today</div>
+        </div>
+        <div class="sales-mini-card">
+          <div class="sales-mini-value text-emerald" id="salesWeek">R 0</div>
+          <div class="sales-mini-label">This Week</div>
+        </div>
+        <div class="sales-mini-card">
+          <div class="sales-mini-value text-amber" id="salesMonth">R 0</div>
+          <div class="sales-mini-label">This Month</div>
+        </div>
+      </div>
 
-            void main() {
-              vColor = color;
-              vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+      <div class="sales-feed-title">Live Feed</div>
+      <div id="salesFeed" class="stagger">
+        <!-- Sales feed injected by JS -->
+      </div>
+    </div>
 
-              // Twinkle effect: vary size based on sine wave
-              float twinkle = sin(time * 5.0 + position.x * 0.1) * 0.5 + 0.5;
-              gl_PointSize = size * (600.0 / -mvPosition.z) * twinkle;
+    <!-- ──── SETTINGS PAGE ──── -->
+    <div id="page-settings" class="page">
+      <h1 class="section-title">Settings</h1>
+      <p class="section-subtitle">Manage your hub configuration</p>
 
-              gl_Position = projectionMatrix * mvPosition;
-            }
-          `,
-          fragmentShader: `
-            uniform vec3 color;
-            uniform sampler2D pointTexture;
-            varying vec3 vColor;
+      <div class="settings-group">
+        <div class="settings-group-title">Business</div>
+        <div class="settings-card">
+          <div class="settings-item">
+            <div class="settings-icon">🏪</div>
+            <span class="settings-label">Business Profile</span>
+            <span class="settings-arrow">›</span>
+          </div>
+          <div class="settings-item">
+            <div class="settings-icon">📍</div>
+            <span class="settings-label">Locations</span>
+            <span class="settings-arrow">›</span>
+          </div>
+          <div class="settings-item">
+            <div class="settings-icon">👥</div>
+            <span class="settings-label">Team Members</span>
+            <span class="settings-arrow">›</span>
+          </div>
+        </div>
+      </div>
 
-            void main() {
-              gl_FragColor = vec4(vColor, 1.0);
-              gl_FragColor = gl_FragColor * texture2D(pointTexture, gl_PointCoord);
-            }
-          `,
-          blending: THREE.AdditiveBlending,
-          depthTest: false,
-          transparent: true
-        });
+      <div class="settings-group">
+        <div class="settings-group-title">Machines</div>
+        <div class="settings-card">
+          <div class="settings-item">
+            <div class="settings-icon">⚙️</div>
+            <span class="settings-label">Machine Configuration</span>
+            <span class="settings-arrow">›</span>
+          </div>
+          <div class="settings-item">
+            <div class="settings-icon">🔔</div>
+            <span class="settings-label">Alert Preferences</span>
+            <span class="settings-arrow">›</span>
+          </div>
+        </div>
+      </div>
 
-        const particlesMesh = new THREE.Points(particlesGeometry, customParticlesMaterial);
-        scene.add(particlesMesh);
+      <div class="settings-group">
+        <div class="settings-group-title">Economy</div>
+        <div class="settings-card">
+          <div class="settings-item">
+            <div class="settings-icon">🪙</div>
+            <span class="settings-label">Token Settings</span>
+            <span class="settings-arrow">›</span>
+          </div>
+          <div class="settings-item">
+            <div class="settings-icon">💱</div>
+            <span class="settings-label">Currency & Conversion</span>
+            <span class="settings-arrow">›</span>
+          </div>
+          <div class="settings-item">
+            <div class="settings-icon">📊</div>
+            <span class="settings-label">Reports & Analytics</span>
+            <span class="settings-arrow">›</span>
+          </div>
+        </div>
+      </div>
 
-        // Lights
-        const ambientLight = new THREE.AmbientLight(0x404040, 2);
-        scene.add(ambientLight);
+      <div class="settings-group">
+        <div class="settings-group-title">System</div>
+        <div class="settings-card">
+          <div class="settings-item">
+            <div class="settings-icon">🎨</div>
+            <span class="settings-label">Appearance</span>
+            <span class="settings-arrow">›</span>
+          </div>
+          <div class="settings-item">
+            <div class="settings-icon">🔐</div>
+            <span class="settings-label">Security</span>
+            <span class="settings-arrow">›</span>
+          </div>
+          <div class="settings-item">
+            <div class="settings-icon">ℹ️</div>
+            <span class="settings-label">About</span>
+            <span class="settings-arrow">›</span>
+          </div>
+        </div>
+      </div>
 
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-        directionalLight.position.set(5, 5, 5).normalize();
-        scene.add(directionalLight);
+      <div class="settings-version">Dubicx Switcx Hub v0.1.0-alpha</div>
+    </div>
 
-        camera.position.z = 40;
+  </main>
 
-        const clock = new THREE.Clock();
+  <!-- ======== BOTTOM NAVIGATION ======== -->
+  <nav class="bottom-nav" id="bottomNav">
+    <button class="nav-item active" data-page="dashboard" id="nav-dashboard">
+      <span class="nav-icon">📊</span>
+      <span class="nav-label">Home</span>
+    </button>
+    <button class="nav-item" data-page="inventory" id="nav-inventory">
+      <span class="nav-icon">📦</span>
+      <span class="nav-label">Inventory</span>
+    </button>
+    <button class="nav-item" data-page="tokens" id="nav-tokens">
+      <span class="nav-icon">🪙</span>
+      <span class="nav-label">Tokens</span>
+    </button>
+    <button class="nav-item" data-page="sales" id="nav-sales">
+      <span class="nav-icon">🧾</span>
+      <span class="nav-label">Sales</span>
+    </button>
+    <button class="nav-item" data-page="settings" id="nav-settings">
+      <span class="nav-icon">⚙️</span>
+      <span class="nav-label">Settings</span>
+    </button>
+  </nav>
 
-        const animate = () => {
-          requestAnimationFrame(animate);
+</div>
 
-          const elapsedTime = clock.getElapsedTime();
+<script>
+  // ================================================================
+  // DATA MODELS — Digital Twin
+  // ================================================================
 
-          // Animate shapes
-          knot.rotation.x += 0.002;
-          knot.rotation.y += 0.003;
+  const vendingMachines = [
+    { id: 'VM-001', name: 'Main Street Vendor', location: 'CBD, Main St.', status: 'online', temp: 4.2, sales: 42 },
+    { id: 'VM-002', name: 'Campus Kiosk', location: 'University, Block C', status: 'online', temp: 3.8, sales: 31 },
+    { id: 'VM-003', name: 'Mall Hub Alpha', location: 'Eastgate Mall, L2', status: 'warning', temp: 7.1, sales: 18 },
+    { id: 'VM-004', name: 'Station Point', location: 'Central Station', status: 'offline', temp: null, sales: 0 },
+    { id: 'VM-005', name: 'Lounge Vendor', location: 'Shisha Lounge, 5th Ave', status: 'online', temp: 4.0, sales: 55 },
+  ];
 
-          dodeca.rotation.x += 0.005;
-          dodeca.rotation.y += 0.005;
-          dodeca.position.y = Math.sin(elapsedTime * 0.5) * 8 + 15;
-          dodeca.position.x = Math.cos(elapsedTime * 0.4) * 10 - 20;
+  const inventoryData = [
+    // Drinks
+    { id: 1, name: 'Spring Water 500ml', category: 'drinks', price: 12.00, currency: 'R', stock: 120, capacity: 150, icon: '💧' },
+    { id: 2, name: 'Orange Juice 350ml', category: 'drinks', price: 18.50, currency: 'R', stock: 85, capacity: 100, icon: '🍊' },
+    { id: 3, name: 'Coca-Cola 330ml', category: 'drinks', price: 16.00, currency: 'R', stock: 95, capacity: 120, icon: '🥤' },
+    { id: 4, name: 'Energy Drink 250ml', category: 'drinks', price: 25.00, currency: 'R', stock: 45, capacity: 80, icon: '⚡' },
+    { id: 5, name: 'Iced Tea 500ml', category: 'drinks', price: 15.00, currency: 'R', stock: 60, capacity: 100, icon: '🍵' },
+    // Shisha Flavors
+    { id: 6, name: 'Mint Royale', category: 'shisha-flavors', price: 85.00, currency: 'R', stock: 30, capacity: 50, icon: '🌿' },
+    { id: 7, name: 'Double Apple Classic', category: 'shisha-flavors', price: 90.00, currency: 'R', stock: 22, capacity: 50, icon: '🍎' },
+    { id: 8, name: 'Blueberry Chill', category: 'shisha-flavors', price: 85.00, currency: 'R', stock: 18, capacity: 40, icon: '🫐' },
+    { id: 9, name: 'Grape Fusion', category: 'shisha-flavors', price: 80.00, currency: 'R', stock: 35, capacity: 50, icon: '🍇' },
+    { id: 10, name: 'Watermelon Ice', category: 'shisha-flavors', price: 85.00, currency: 'R', stock: 12, capacity: 40, icon: '🍉' },
+    { id: 11, name: 'Mango Tango', category: 'shisha-flavors', price: 88.00, currency: 'R', stock: 28, capacity: 50, icon: '🥭' },
+    // Shisha Foil
+    { id: 12, name: 'Premium Foil Roll (50m)', category: 'shisha-foil', price: 45.00, currency: 'R', stock: 40, capacity: 60, icon: '🪩' },
+    { id: 13, name: 'Pre-cut Circle Foils (x100)', category: 'shisha-foil', price: 55.00, currency: 'R', stock: 25, capacity: 40, icon: '⭕' },
+    { id: 14, name: 'Heavy Duty Foil (100m)', category: 'shisha-foil', price: 72.00, currency: 'R', stock: 15, capacity: 30, icon: '🛡️' },
+    // Shisha Charcoal
+    { id: 15, name: 'Coconut Charcoal (1kg)', category: 'shisha-charcoal', price: 65.00, currency: 'R', stock: 50, capacity: 80, icon: '🥥' },
+    { id: 16, name: 'Quick-Light Discs (x10)', category: 'shisha-charcoal', price: 35.00, currency: 'R', stock: 70, capacity: 100, icon: '🔥' },
+    { id: 17, name: 'Bamboo Charcoal (2kg)', category: 'shisha-charcoal', price: 95.00, currency: 'R', stock: 8, capacity: 30, icon: '🎋' },
+  ];
 
-          icosa.rotation.z += 0.004;
-          icosa.rotation.x += 0.002;
-          icosa.position.x = Math.cos(elapsedTime * 0.3) * 15 + 25;
-          icosa.position.y = Math.sin(elapsedTime * 0.2) * 10 - 12;
+  const tokenTransactions = [
+    { type: 'earned', desc: 'Sales commission — VM-001', amount: 24.5, time: '2 min ago' },
+    { type: 'earned', desc: 'Sales commission — VM-005', amount: 18.0, time: '15 min ago' },
+    { type: 'spent', desc: 'Inventory restock fee', amount: -8.0, time: '1 hr ago' },
+    { type: 'earned', desc: 'Daily staking reward', amount: 5.2, time: '3 hrs ago' },
+    { type: 'transfer', desc: 'Transfer to partner hub', amount: -50.0, time: '6 hrs ago' },
+    { type: 'earned', desc: 'New machine bonus', amount: 100.0, time: 'Yesterday' },
+  ];
 
-          cylinder.rotation.y += 0.007;
-          cylinder.position.z = Math.sin(elapsedTime * 0.6) * 10 - 50;
-          cylinder.position.x = Math.cos(elapsedTime * 0.7) * 5;
+  const salesFeedData = [
+    { product: 'Coca-Cola 330ml', machine: 'VM-001', time: 'Just now', amount: 16.00, icon: '🥤' },
+    { product: 'Mint Royale Shisha', machine: 'VM-005', time: '3 min ago', amount: 85.00, icon: '🌿' },
+    { product: 'Spring Water 500ml', machine: 'VM-002', time: '7 min ago', amount: 12.00, icon: '💧' },
+    { product: 'Quick-Light Charcoal', machine: 'VM-005', time: '12 min ago', amount: 35.00, icon: '🔥' },
+    { product: 'Energy Drink 250ml', machine: 'VM-001', time: '18 min ago', amount: 25.00, icon: '⚡' },
+    { product: 'Double Apple Classic', machine: 'VM-005', time: '25 min ago', amount: 90.00, icon: '🍎' },
+    { product: 'Premium Foil Roll', machine: 'VM-003', time: '32 min ago', amount: 45.00, icon: '🪩' },
+    { product: 'Orange Juice 350ml', machine: 'VM-002', time: '41 min ago', amount: 18.50, icon: '🍊' },
+  ];
 
-          // Update particle shader time uniform
-          customParticlesMaterial.uniforms.time.value = elapsedTime;
-          particlesMesh.rotation.y += 0.0005;
-          particlesMesh.rotation.x += 0.0002;
+  // ================================================================
+  // TOKEN ENGINE
+  // ================================================================
 
-          renderer.render(scene, camera);
-        };
+  const tokenEngine = {
+    balance: 1247.50,
+    conversionRate: 0.085, // 1 SwitcxToken = $0.085 USD
+    totalEarned: 3890.20,
+    totalSpent: 2642.70,
 
-        animate();
+    getUSDValue() {
+      return (this.balance * this.conversionRate).toFixed(2);
+    },
 
-        // Handle window resize for Three.js
-        window.addEventListener('resize', () => {
-          camera.aspect = window.innerWidth / window.innerHeight;
-          camera.updateProjectionMatrix();
-          renderer.setSize(window.innerWidth, window.innerHeight);
-        });
-      };
+    earn(amount) {
+      this.balance += amount;
+      this.totalEarned += amount;
+    },
 
-      // --- Floating Elements Animation ---
-      const createFloatingElements = () => {
-        const elementsCount = 8;
-        const appContainer = document.querySelector('.app-container');
-
-        for (let i = 0; i < elementsCount; i++) {
-          const element = document.createElement('div');
-          element.className = 'floating-element';
-
-          // Initial random position within a reasonable range of the app container
-          const size = Math.random() * 100 + 50; // Size between 50px and 150px
-          // Ensure elements start slightly outside or on the edge to float in
-          const x = Math.random() * appContainer.offsetWidth * 1.2 - (appContainer.offsetWidth * 0.1);
-          const y = Math.random() * appContainer.offsetHeight * 1.2 - (appContainer.offsetHeight * 0.1);
-
-          element.style.width = `${size}px`;
-          element.style.height = `${size}px`;
-          element.style.left = `${x}px`;
-          element.style.top = `${y}px`;
-
-          // Store initial position for mouse parallax effect
-          element.dataset.initialX = x;
-          element.dataset.initialY = y;
-
-          appContainer.appendChild(element);
-
-          // Anime.js animation for floating motion
-          anime({
-            targets: element,
-            translateX: () => anime.random(-150, 150), // Less drastic movement
-            translateY: () => anime.random(-150, 150),
-            scale: () => anime.random(0.8, 1.5), // More subtle scale variation
-            rotate: () => anime.random(0, 360), // Random initial rotation
-            duration: () => anime.random(6000, 18000), // Slower, smoother movement
-            easing: 'easeInOutSine', // Smooth sine wave easing
-            loop: true,
-            direction: 'alternate',
-          });
-        }
-
-        // Mouse parallax effect on floating elements
-        document.addEventListener('mousemove', (e) => {
-          const appRect = appContainer.getBoundingClientRect();
-          const centerX = appRect.left + (appRect.width / 2);
-          const centerY = appRect.top + (appRect.height / 2);
-
-          const mouseX = e.clientX - centerX;
-          const mouseY = e.clientY - centerY;
-
-          anime({
-            targets: '.floating-element',
-            translateX: (el, i) => {
-              const initialX = parseFloat(el.dataset.initialX);
-              return (initialX - (appRect.width / 2)) + (mouseX * 0.05 * ((i % 2 === 0) ? 1 : -1)); // Vary parallax direction
-            },
-            translateY: (el, i) => {
-              const initialY = parseFloat(el.dataset.initialY);
-              return (initialY - (appRect.height / 2)) + (mouseY * 0.05 * ((i % 3 === 0) ? 1 : -1)); // Vary parallax direction
-            },
-            duration: 1000,
-            easing: 'easeOutCubic',
-          });
-        });
-      };
-
-      // --- Navigation Logic ---
-      const navOptions = [
-        { label: "About", target: "about-content" },
-        { label: "Financial", target: "financial-content" },
-        { label: "Social", target: "social-content" },
-        { label: "Creative", target: "creative-works-content" },
-      ];
-
-      let currentPageIndex = 0; // Tracks the current section index in navOptions
-      let currentActiveTargetId = navOptions[0].target; // Keep track of the currently active section
-
-      const navOptionsWrapper = document.querySelector('.nav-options-wrapper');
-      const prevButton = document.getElementById('nav-prev');
-      const nextButton = document.getElementById('nav-next');
-      const allContentSections = document.querySelectorAll('.content-section');
-      const mainAppTitle = document.getElementById('mainAppTitle');
-
-      // Updates the active state of navigation buttons visually
-      const updateNavButtonActiveStates = () => {
-        const visibleButtons = navOptionsWrapper.querySelectorAll('.nav-control-btn');
-        visibleButtons.forEach(button => {
-          if (button.dataset.target === currentActiveTargetId) {
-            button.classList.add('active');
-          } else {
-            button.classList.remove('active');
-          }
-        });
-      };
-
-      // Displays the selected content section and hides others
-      const setActiveSection = (targetId) => {
-        currentActiveTargetId = targetId;
-        allContentSections.forEach(section => {
-          if (section.id === targetId) {
-            section.classList.remove('hidden');
-            // Scroll to top when a new section is activated
-            section.scrollTop = 0;
-          } else {
-            section.classList.add('hidden');
-          }
-        });
-        updateNavButtonActiveStates();
-
-        // Update the main app title based on the active section
-        const activeOption = navOptions.find(option => option.target === targetId);
-        if (activeOption) {
-            mainAppTitle.textContent = activeOption.label.toUpperCase() + " HUB";
-            if (activeOption.target === 'financial-content') {
-                // Special case for financial content, update title to "Client Accounts"
-                mainAppTitle.textContent = "CLIENT ACCOUNTS";
-                // Also ensure the financial view is in list mode when activated from nav
-                switchToListView();
-            }
-        } else {
-            mainAppTitle.textContent = "PMD742OMNI HUB"; // Default title
-        }
-      };
-
-      // Renders the current set of navigation buttons based on currentPageIndex
-      const renderNavButtons = () => {
-        navOptionsWrapper.innerHTML = ''; // Clear existing buttons
-
-        if (navOptions.length === 0) {
-            return; // No options to render
-        }
-
-        // Always show only one button at a time in the center
-        const option = navOptions[currentPageIndex];
-        const button = document.createElement('button');
-        button.classList.add('nav-control-btn');
-        button.textContent = option.label;
-        button.dataset.target = option.target;
-        button.addEventListener('click', function () {
-          setActiveSection(this.dataset.target);
-        });
-        navOptionsWrapper.appendChild(button);
-
-        updateNavButtonActiveStates();
-        updateToggleButtons(); // Update disabled state of prev/next buttons
-      };
-
-      // Updates the disabled state of the previous/next navigation buttons
-      const updateToggleButtons = () => {
-        prevButton.disabled = currentPageIndex === 0;
-        nextButton.disabled = currentPageIndex === navOptions.length - 1;
-      };
-
-      // Event listener for the 'Previous' button
-      prevButton.addEventListener('click', function () {
-        if (currentPageIndex > 0) {
-          currentPageIndex--;
-          renderNavButtons();
-          setActiveSection(navOptions[currentPageIndex].target); // Activate the new section
-        }
-      });
-
-      // Event listener for the 'Next' button
-      nextButton.addEventListener('click', function () {
-        if (currentPageIndex < navOptions.length - 1) {
-          currentPageIndex++;
-          renderNavButtons();
-          setActiveSection(navOptions[currentPageIndex].target); // Activate the new section
-        }
-      });
-
-      // --- Client Accounts App Logic (Integrated from client_balance.html) ---
-      const loader = document.getElementById('loader');
-      const clientListView = document.getElementById('clientListView');
-      const clientDetailView = document.getElementById('clientDetailView');
-      const searchInput = document.getElementById('searchInput');
-      const clientNameListElement = document.getElementById('clientNameListElement');
-      const noClientsInListMessage = document.getElementById('noClientsInListMessage');
-      const backButton = document.getElementById('backButton');
-
-      // Detail View elements
-      const detailClientName = document.getElementById('detailClientName');
-      const clientBalancesContainer = document.getElementById('clientBalancesContainer');
-      const detailClientLastUpdated = document.getElementById('detailClientLastUpdated');
-
-      // Client Data
-      const clientsData = [
-          {
-              id: 1,
-              name: "Petros Njabulo Dube",
-              balances: [
-                  { label: "Main Debt", amount: 995.00, currency: "R" },
-                  { label: "Loan A", amount: 200.00, currency: "$" },
-                  { label: "Service Fee", amount: 50.00, currency: "R" }
-              ],
-              lastUpdated: "May 21, 2025"
-          },
-          {
-              id: 2,
-              name: "Ocean Thabo Mlilo",
-              balances: [
-                  { label: "Checking", amount: 17.94, currency: "$" },
-                  { label: "Savings", amount: -500.00, currency: "$" } // Example of credit
-              ],
-              lastUpdated: "May 21, 2025"
-          },
-          {
-              id: 3,
-              name: "Charmaine Nokuthula Khumalo",
-              balances: [
-                  { label: "Overdue Invoice", amount: 300.75, currency: "R" }
-              ],
-              lastUpdated: "May 20, 2025"
-          },
-          {
-              id: 4,
-              name: "Diana Nokuthula Ngwenya",
-              balances: [
-                  { label: "Project Fee", amount: 85.00, currency: "R" }
-              ],
-              lastUpdated: "May 15, 2025"
-          },
-          {
-              id: 5,
-              name: "Edward Thulani Moyo",
-              balances: [
-                  { label: "Installment 1", amount: 450.20, currency: "R" },
-                  { label: "Installment 2", amount: 250.00, currency: "R" }
-              ],
-              lastUpdated: "May 21, 2025"
-          },
-          {
-              id: 6,
-              name: "Fiona Thando Dewa",
-              balances: [
-                  { label: "Subscription", amount: 25, currency: "R" }
-              ],
-              lastUpdated: "May 21, 2025"
-          },
-          {
-              id: 7,
-              name: "George Kuda Katsidzira",
-              balances: [
-                  { label: "Outstanding Balance", amount: 199.99, currency: "R" }
-              ],
-              lastUpdated: "May 17, 2025"
-          },
-          {
-              id: 8,
-              name: "Harriet Nomaxhesha Ncube",
-              balances: [
-                  { label: "Credit", amount: -0.30, currency: "$" }
-              ],
-              lastUpdated: "May 20, 2025"
-          },
-          {
-              id: 9,
-              name: "Isaac Vusumuzi Ndlovu",
-              balances: [
-                  { label: "Loan Repayment", amount: 1200.00, currency: "R" }
-              ],
-              lastUpdated: "May 22, 2025"
-          },
-          {
-              id: 10,
-              name: "Joyce Sipho Sibanda",
-              balances: [
-                  { label: "Refund Due", amount: -50.00, currency: "$" }
-              ],
-              lastUpdated: "May 22, 2025"
-          },
-          {
-              id: 11,
-              name: "Kenneth Tafadzwa Ncube",
-              balances: [
-                  { label: "Service Charge", amount: 75.50, currency: "R" }
-              ],
-              lastUpdated: "May 21, 2025"
-          },
-          {
-              id: 12,
-              name: "Lindiwe Memory Moyo",
-              balances: [
-                  { label: "Invoice 123", amount: 210.00, currency: "R" }
-              ],
-              lastUpdated: "May 20, 2025"
-          },
-          {
-              id: 13,
-              name: "Mthulisi Blessing Nxumalo",
-              balances: [
-                  { label: "Small Debt", amount: 15.00, currency: "$" }
-              ],
-              lastUpdated: "May 19, 2025"
-          },
-          {
-              id: 14,
-              name: "Nomalanga Bridget Dube",
-              balances: [
-                  { label: "Overpayment", amount: -100.00, currency: "R" }
-              ],
-              lastUpdated: "May 18, 2025"
-          },
-          {
-              id: 15,
-              name: "Oscar P. Gumbo",
-              balances: [
-                  { label: "Payment Due", amount: 600.00, currency: "R" }
-              ],
-              lastUpdated: "May 22, 2025"
-          },
-          {
-              id: 16,
-              name: "Precious Rutendo Shumba",
-              balances: [
-                  { label: "Outstanding", amount: 35.75, currency: "$" }
-              ],
-              lastUpdated: "May 21, 2025"
-          },
-          {
-              id: 17,
-              name: "Queen Nomusa Gumede",
-              balances: [
-                  { label: "Prepaid", amount: -250.00, currency: "R" }
-              ],
-              lastUpdated: "May 20, 2025"
-          },
-          {
-              id: 18,
-              name: "Ronald Tafara Ncube",
-              balances: [
-                  { label: "Tiny Balance", amount: 9.99, currency: "$" }
-              ],
-              lastUpdated: "May 19, 2025"
-          },
-          {
-              id: 19,
-              name: "Sibusisiwe Faith Sibanda",
-              balances: [
-                  { label: "Amount Owed", amount: 420.00, currency: "R" }
-              ],
-              lastUpdated: "May 18, 2025"
-          },
-          {
-              id: 20,
-              name: "Thandiwe Grace Khumalo",
-              balances: [
-                  { label: "Customer Credit", amount: -75.00, currency: "$" }
-              ],
-              lastUpdated: "May 17, 2025"
-          }
-      ];
-
-      let currentFilteredClients = [];
-
-      function showLoader() {
-          loader.style.display = 'block';
+    spend(amount) {
+      if (this.balance >= amount) {
+        this.balance -= amount;
+        this.totalSpent += amount;
+        return true;
       }
+      return false;
+    }
+  };
 
-      function hideLoader() {
-          loader.style.display = 'none';
-      }
+  // ================================================================
+  // NAVIGATION
+  // ================================================================
 
-      function switchToListView() {
-          clientDetailView.classList.remove('active');
-          clientListView.classList.add('active');
-          searchInput.value = '';
-          currentFilteredClients = [...clientsData];
-          renderClientList();
-          mainAppTitle.textContent = "CLIENT ACCOUNTS"; // Ensure main header is "Client Accounts"
-      }
+  function switchPage(pageName) {
+    // Hide all pages
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    // Show target page
+    const target = document.getElementById('page-' + pageName);
+    if (target) target.classList.add('active');
 
-      function switchToDetailView() {
-          clientListView.classList.remove('active');
-          clientDetailView.classList.add('active');
-      }
+    // Update nav items
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    const navBtn = document.getElementById('nav-' + pageName);
+    if (navBtn) navBtn.classList.add('active');
 
-      function renderClientList() {
-          showLoader();
-          clientNameListElement.innerHTML = '';
-          noClientsInListMessage.style.display = 'none';
+    // Scroll to top
+    document.querySelector('.page-container').scrollTop = 0;
+  }
 
-          setTimeout(() => {
-              if (currentFilteredClients.length === 0) {
-                  noClientsInListMessage.style.display = 'block';
-              } else {
-                  currentFilteredClients.forEach(client => {
-                      const listItem = document.createElement('li');
-                      listItem.classList.add('client-name-item');
-                      listItem.textContent = client.name;
-                      listItem.setAttribute('data-client-id', client.id);
-                      listItem.addEventListener('click', () => handleClientSelection(client.id));
-                      clientNameListElement.appendChild(listItem);
-                  });
-              }
-              hideLoader();
-          }, 200);
-      }
+  document.getElementById('bottomNav').addEventListener('click', (e) => {
+    const navItem = e.target.closest('.nav-item');
+    if (!navItem) return;
+    const page = navItem.dataset.page;
+    switchPage(page);
+  });
 
-      function handleClientSelection(clientId) {
-          showLoader();
-          const selectedClient = clientsData.find(client => client.id === clientId);
-          if (selectedClient) {
-              setTimeout(() => {
-                  detailClientName.textContent = selectedClient.name;
-                  clientBalancesContainer.innerHTML = '';
+  // ================================================================
+  // RENDER: DASHBOARD
+  // ================================================================
 
-                  if (selectedClient.balances && selectedClient.balances.length > 0) {
-                      selectedClient.balances.forEach(balance => {
-                          const balanceItem = document.createElement('div');
-                          balanceItem.classList.add('balance-item');
+  function renderDashboard() {
+    // Stats
+    const totalRevenue = vendingMachines.reduce((s, m) => s + (m.sales * 22.5), 0);
+    const totalItems = vendingMachines.reduce((s, m) => s + m.sales, 0);
+    const activeMachines = vendingMachines.filter(m => m.status !== 'offline').length;
 
-                          const balanceLabel = document.createElement('span');
-                          balanceLabel.classList.add('balance-label');
-                          balanceLabel.textContent = balance.label + ":";
-                          balanceItem.appendChild(balanceLabel);
+    animateCounter('statRevenue', totalRevenue, 'R ');
+    animateCounter('statItemsSold', totalItems);
+    animateCounter('statMachines', activeMachines);
+    animateCounter('statTokens', Math.floor(tokenEngine.balance));
 
-                          const balanceAmount = document.createElement('span');
-                          balanceAmount.classList.add('balance-amount');
-                          const formattedAmount = balance.currency + " " + Math.abs(balance.amount).toFixed(2);
-                          balanceAmount.textContent = formattedAmount;
+    // Chart bars
+    const chartData = [
+      { label: 'Mon', value: 72 },
+      { label: 'Tue', value: 58 },
+      { label: 'Wed', value: 89 },
+      { label: 'Thu', value: 65 },
+      { label: 'Fri', value: 95 },
+      { label: 'Sat', value: 83 },
+      { label: 'Sun', value: 44 },
+    ];
 
-                          balanceAmount.classList.remove('debt-positive', 'debt-negative');
-                          if (balance.amount > 0) {
-                              balanceAmount.classList.add('debt-positive');
-                          } else if (balance.amount < 0) {
-                              balanceAmount.classList.add('debt-negative');
-                          }
+    const maxVal = Math.max(...chartData.map(d => d.value));
+    const chartBars = document.getElementById('chartBars');
+    chartBars.innerHTML = '';
 
-                          balanceItem.appendChild(balanceAmount);
-                          clientBalancesContainer.appendChild(balanceItem);
-                      });
-                  } else {
-                      const noBalancesMessage = document.createElement('p');
-                      noBalancesMessage.textContent = "No balance information available.";
-                      noBalancesMessage.style.color = 'var(--sys-color-on-surface-variant)';
-                      noBalancesMessage.style.padding = '1rem';
-                      clientBalancesContainer.appendChild(noBalancesMessage);
-                  }
+    chartData.forEach((d, i) => {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'chart-bar-wrapper';
 
-                  detailClientLastUpdated.textContent = selectedClient.lastUpdated;
+      const bar = document.createElement('div');
+      bar.className = 'chart-bar' + (i === 4 ? ' accent' : '');
+      bar.style.height = '0%';
 
-                  switchToDetailView();
-                  hideLoader();
-              }, 200);
-          } else {
-              console.error("Client not found!");
-              hideLoader();
-              switchToListView();
-          }
-      }
+      const label = document.createElement('span');
+      label.className = 'chart-bar-label';
+      label.textContent = d.label;
 
-      function filterClientList() {
-          const searchTerm = searchInput.value.toLowerCase().trim();
+      wrapper.appendChild(bar);
+      wrapper.appendChild(label);
+      chartBars.appendChild(wrapper);
 
-          if (searchTerm === '') {
-              currentFilteredClients = [...clientsData];
-          } else {
-              currentFilteredClients = clientsData.filter(client =>
-                  client.name.toLowerCase().includes(searchTerm)
-              );
-          }
-
-          if (clientDetailView.classList.contains('active')) {
-              switchToListView();
-          } else {
-              renderClientList();
-          }
-      }
-
-      // --- Initialization ---
-      setupThreeJS();
-      createFloatingElements();
-      renderNavButtons(); // Render initial navigation buttons
-      setActiveSection(currentActiveTargetId); // Set the initial active section
-
-      // Client Accounts App specific initialization
-      clientsData.sort((a, b) => a.name.localeCompare(b.name));
-      currentFilteredClients = [...clientsData];
-
-      if (!clientsData || clientsData.length === 0) {
-          noClientsInListMessage.textContent = "No account data has been entered. Please update the JavaScript file.";
-          noClientsInListMessage.style.display = 'block';
-          searchInput.style.display = 'none';
-      } else {
-          // Initial render of the full list will happen when Financial section is activated
-      }
-
-      // Attach event listeners for Client Accounts App
-      searchInput.addEventListener('input', filterClientList);
-      backButton.addEventListener('click', switchToListView);
+      // Animate bar heights
+      setTimeout(() => {
+        bar.style.height = ((d.value / maxVal) * 100) + '%';
+      }, 100 + i * 80);
     });
-  </script>
+
+    // Machine cards
+    const machineList = document.getElementById('machineList');
+    machineList.innerHTML = '';
+
+    vendingMachines.forEach(m => {
+      const statusEmoji = m.status === 'online' ? '🟢' : m.status === 'warning' ? '🟡' : '🔴';
+      const card = document.createElement('div');
+      card.className = 'machine-card';
+      card.innerHTML = `
+        <div class="machine-avatar ${m.status}">${statusEmoji}</div>
+        <div class="machine-info">
+          <div class="machine-name">${m.name}</div>
+          <div class="machine-location">${m.location}</div>
+        </div>
+        <span class="machine-status-badge ${m.status}">${m.status}</span>
+      `;
+      machineList.appendChild(card);
+    });
+  }
+
+  // ================================================================
+  // RENDER: INVENTORY
+  // ================================================================
+
+  let currentCategory = 'all';
+
+  function renderInventory(category) {
+    currentCategory = category || 'all';
+    const list = document.getElementById('inventoryList');
+    list.innerHTML = '';
+
+    // Update tab state
+    document.querySelectorAll('.inv-tab').forEach(t => {
+      t.classList.toggle('active', t.dataset.category === currentCategory);
+    });
+
+    const items = currentCategory === 'all'
+      ? inventoryData
+      : inventoryData.filter(item => item.category === currentCategory);
+
+    items.forEach(item => {
+      const stockPercent = Math.round((item.stock / item.capacity) * 100);
+      const stockLevel = stockPercent > 60 ? 'high' : stockPercent > 25 ? 'medium' : 'low';
+      const catClass = item.category.includes('flavors') || item.category.includes('foil') || item.category.includes('charcoal')
+        ? (item.category.includes('flavors') ? 'shisha' : 'accessories')
+        : 'drinks';
+
+      const el = document.createElement('div');
+      el.className = 'inventory-item animate-count';
+      el.innerHTML = `
+        <div class="inv-item-icon ${catClass}">${item.icon}</div>
+        <div class="inv-item-details">
+          <div class="inv-item-name">${item.name}</div>
+          <div class="inv-item-meta">${item.category.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}</div>
+        </div>
+        <div class="inv-item-right">
+          <div class="inv-item-price">${item.currency} ${item.price.toFixed(2)}</div>
+          <div class="inv-item-stock">${item.stock}/${item.capacity}</div>
+          <div class="inv-stock-bar">
+            <div class="inv-stock-fill ${stockLevel}" style="width: ${stockPercent}%"></div>
+          </div>
+        </div>
+      `;
+      list.appendChild(el);
+    });
+  }
+
+  // Tab click handler
+  document.getElementById('invTabs').addEventListener('click', (e) => {
+    const tab = e.target.closest('.inv-tab');
+    if (!tab) return;
+    renderInventory(tab.dataset.category);
+  });
+
+  // ================================================================
+  // RENDER: TOKENS
+  // ================================================================
+
+  function renderTokens() {
+    document.getElementById('tokenBalanceValue').textContent = tokenEngine.balance.toLocaleString('en', { minimumFractionDigits: 2 });
+    document.getElementById('tokenBalanceUsd').textContent = '≈ $' + tokenEngine.getUSDValue() + ' USD';
+
+    const txList = document.getElementById('tokenTxList');
+    txList.innerHTML = '';
+
+    tokenTransactions.forEach(tx => {
+      const el = document.createElement('div');
+      el.className = 'token-tx-item';
+      el.innerHTML = `
+        <div class="tx-icon ${tx.type}">${tx.type === 'earned' ? '⬇' : tx.type === 'spent' ? '⬆' : '↗'}</div>
+        <div class="tx-details">
+          <div class="tx-desc">${tx.desc}</div>
+          <div class="tx-time">${tx.time}</div>
+        </div>
+        <div class="tx-amount ${tx.amount >= 0 ? 'positive' : 'negative'}">
+          ${tx.amount >= 0 ? '+' : ''}${tx.amount.toFixed(1)} S₿
+        </div>
+      `;
+      txList.appendChild(el);
+    });
+  }
+
+  // ================================================================
+  // RENDER: SALES
+  // ================================================================
+
+  function renderSales() {
+    const todayTotal = salesFeedData.reduce((s, sale) => s + sale.amount, 0);
+    document.getElementById('salesToday').textContent = 'R ' + todayTotal.toFixed(0);
+    document.getElementById('salesWeek').textContent = 'R ' + (todayTotal * 5.8).toFixed(0);
+    document.getElementById('salesMonth').textContent = 'R ' + (todayTotal * 22.3).toFixed(0);
+
+    const feedEl = document.getElementById('salesFeed');
+    feedEl.innerHTML = '';
+
+    salesFeedData.forEach(sale => {
+      const el = document.createElement('div');
+      el.className = 'sale-feed-item animate-count';
+      el.innerHTML = `
+        <div class="sale-feed-icon">${sale.icon}</div>
+        <div class="sale-feed-info">
+          <div class="sale-feed-product">${sale.product}</div>
+          <div class="sale-feed-meta">${sale.machine} · ${sale.time}</div>
+        </div>
+        <div class="sale-feed-amount">+R ${sale.amount.toFixed(2)}</div>
+      `;
+      feedEl.appendChild(el);
+    });
+  }
+
+  // ================================================================
+  // UTILITIES
+  // ================================================================
+
+  function animateCounter(elementId, target, prefix = '') {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+
+    const duration = 1200;
+    const start = performance.now();
+    const startVal = 0;
+
+    function update(now) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      // Ease out cubic
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const current = Math.round(startVal + (target - startVal) * eased);
+
+      if (prefix.includes('R')) {
+        el.textContent = prefix + current.toLocaleString('en');
+      } else {
+        el.textContent = prefix + current.toLocaleString('en');
+      }
+
+      if (progress < 1) {
+        requestAnimationFrame(update);
+      }
+    }
+
+    requestAnimationFrame(update);
+  }
+
+  // ================================================================
+  // LIVE SIMULATION — simulates a sale every N seconds
+  // ================================================================
+
+  function simulateSale() {
+    const items = inventoryData.filter(i => i.stock > 0);
+    if (items.length === 0) return;
+
+    const item = items[Math.floor(Math.random() * items.length)];
+    const machines = vendingMachines.filter(m => m.status === 'online');
+    if (machines.length === 0) return;
+
+    const machine = machines[Math.floor(Math.random() * machines.length)];
+
+    // Update stock
+    item.stock = Math.max(0, item.stock - 1);
+
+    // Update machine sales
+    machine.sales += 1;
+
+    // Earn tokens
+    const tokensEarned = item.price * 0.02;
+    tokenEngine.earn(tokensEarned);
+
+    // Add to sales feed
+    salesFeedData.unshift({
+      product: item.name,
+      machine: machine.id,
+      time: 'Just now',
+      amount: item.price,
+      icon: item.icon,
+    });
+
+    // Add token transaction
+    tokenTransactions.unshift({
+      type: 'earned',
+      desc: `Commission — ${machine.id}`,
+      amount: tokensEarned,
+      time: 'Just now',
+    });
+
+    // Cap arrays
+    if (salesFeedData.length > 20) salesFeedData.pop();
+    if (tokenTransactions.length > 20) tokenTransactions.pop();
+
+    // Re-render active page
+    const activePage = document.querySelector('.page.active');
+    if (activePage) {
+      switch (activePage.id) {
+        case 'page-dashboard': renderDashboard(); break;
+        case 'page-inventory': renderInventory(currentCategory); break;
+        case 'page-tokens': renderTokens(); break;
+        case 'page-sales': renderSales(); break;
+      }
+    }
+  }
+
+  // ================================================================
+  // INIT
+  // ================================================================
+
+  document.addEventListener('DOMContentLoaded', () => {
+    renderDashboard();
+    renderInventory('all');
+    renderTokens();
+    renderSales();
+
+    // Simulate a sale every 8-15 seconds
+    setInterval(simulateSale, 8000 + Math.random() * 7000);
+  });
+</script>
+
 </body>
 </html>

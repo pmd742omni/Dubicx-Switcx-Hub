@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description" content="Dubicx Switcx Hub — Login" />
+  <meta name="theme-color" content="#0a0e1a" />
+  <title>Login — Dubicx Switcx Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <style>
+    .auth-wrapper {
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .auth-wrapper::before {
+      content: '';
+      position: absolute;
+      top: -200px; left: 50%; transform: translateX(-50%);
+      width: 500px; height: 500px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,229,255,0.08) 0%, transparent 70%);
+      pointer-events: none;
+      animation: ambientPulse 6s ease-in-out infinite;
+    }
+    .auth-card {
+      width: 100%; max-width: 400px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-lg);
+      padding: 40px 32px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      position: relative;
+      z-index: 1;
+    }
+    .auth-logo {
+      width: 56px; height: 56px; border-radius: var(--radius-md);
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-emerald));
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 20px; color: var(--bg-primary);
+      margin: 0 auto 24px;
+      box-shadow: 0 0 40px rgba(0,229,255,0.2);
+    }
+    .auth-title {
+      text-align: center; font-size: 24px; font-weight: 700;
+      margin-bottom: 6px; color: var(--text-primary);
+    }
+    .auth-subtitle {
+      text-align: center; font-size: 13px; color: var(--text-secondary);
+      margin-bottom: 32px;
+    }
+    .auth-form-group { margin-bottom: 20px; }
+    .auth-label {
+      display: block; font-size: 12px; font-weight: 600;
+      color: var(--text-secondary); margin-bottom: 6px;
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .auth-input {
+      width: 100%; padding: 14px 16px;
+      background: var(--bg-primary); border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm); color: var(--text-primary);
+      font-family: var(--font); font-size: 14px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      box-sizing: border-box;
+    }
+    .auth-input:focus {
+      outline: none; border-color: var(--accent-cyan);
+      box-shadow: 0 0 0 3px rgba(0,229,255,0.1);
+    }
+    .auth-input::placeholder { color: var(--text-muted); }
+    .auth-btn {
+      width: 100%; padding: 14px; border: none;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-emerald));
+      color: var(--bg-primary); font-family: var(--font);
+      font-size: 14px; font-weight: 700; cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 20px rgba(0,229,255,0.2);
+      margin-top: 8px;
+    }
+    .auth-btn:hover {
+      box-shadow: 0 6px 30px rgba(0,229,255,0.35);
+      transform: translateY(-1px);
+    }
+    .auth-btn:active { transform: scale(0.98); }
+    .auth-footer {
+      text-align: center; margin-top: 24px;
+      font-size: 13px; color: var(--text-secondary);
+    }
+    .auth-footer a {
+      color: var(--accent-cyan); text-decoration: none; font-weight: 600;
+    }
+    .auth-footer a:hover { text-decoration: underline; }
+    .auth-error {
+      background: rgba(255,82,82,0.1); border: 1px solid rgba(255,82,82,0.3);
+      color: var(--accent-rose); padding: 10px 16px;
+      border-radius: var(--radius-sm); font-size: 13px;
+      margin-bottom: 20px; text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-wrapper">
+    <div class="auth-card">
+      <div class="auth-logo">DS</div>
+      <h1 class="auth-title">Welcome back</h1>
+      <p class="auth-subtitle">Sign in to your Dubicx Switcx Hub</p>
+
+      {% if error %}
+      <div class="auth-error">{{ error }}</div>
+      {% endif %}
+
+      <form method="POST" action="{{ url_for('login') }}">
+        <div class="auth-form-group">
+          <label class="auth-label" for="username">Username</label>
+          <input class="auth-input" type="text" id="username" name="username" placeholder="Enter your username" required autocomplete="username" />
+        </div>
+        <div class="auth-form-group">
+          <label class="auth-label" for="password">Password</label>
+          <input class="auth-input" type="password" id="password" name="password" placeholder="Enter your password" required autocomplete="current-password" />
+        </div>
+        <button class="auth-btn" type="submit">Sign In</button>
+      </form>
+
+      <div class="auth-footer">
+        Don't have an account? <a href="{{ url_for('register') }}">Create one</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
